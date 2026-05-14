@@ -29,6 +29,7 @@ def init_db(conn):
         CREATE TABLE IF NOT EXISTS first_seen (
             game_id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
+            category TEXT NOT NULL,
             first_date TEXT NOT NULL
         )
     """)
@@ -110,8 +111,8 @@ def main():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     for g in games:
         conn.execute(
-            "INSERT OR IGNORE INTO first_seen (game_id, name, first_date) VALUES (?, ?, ?)",
-            (g["id"], g["name"], today)
+            "INSERT OR IGNORE INTO first_seen (game_id, name, category, first_date) VALUES (?, ?, ?, ?)",
+            (g["id"], g["name"], g["category"], today)
         )
 
     conn.commit()

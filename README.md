@@ -101,6 +101,7 @@ sitebuilder/
 - **Roblox**: 采集 Rolimons 数据，分析爆发潜力和新游戏。
 - **Steam**: 监控 Steam Top Sellers 榜单。
 - **CrazyGames**: 监控 CrazyGames 的新游戏发布（New Games）。
+- **itch.io**: 监控 itch.io 的热门独立游戏（Popular Games）。
 
 #### 设置定时任务（每 4 小时运行一次）
 
@@ -149,4 +150,5 @@ sitebuilder/
   - 修复了 `roblox-monitor` 的 403 错误并将其迁移至 `monitors/roblox`。
   - 新增 `monitors/steam` 监控，支持抓取 Steam Top Sellers。
   - 新增 `monitors/crazygames` 监控，支持抓取 CrazyGames New Games。
+  - 新增 `monitors/itch` 监控，支持抓取 itch.io Popular Games。
   - 统一了多平台监控架构。
