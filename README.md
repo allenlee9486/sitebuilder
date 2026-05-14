@@ -99,6 +99,11 @@ sitebuilder/
 
 在跑 Step 1 之前，可以用 `roblox-monitor/` 自动筛选值得做的游戏：
 
+## 更新日志
+
+- **2026-05-14**: 修复了 `roblox-monitor/scripts/collect.py` 中的 403 Forbidden 错误。通过更新 `User-Agent` 和添加 `Accept` 等请求头，成功恢复了对 Rolimons API 的访问。执行了首次数据采集，成功获取 6706 个游戏快照。
+
+
 1. `collect.py` 每小时采集 Rolimons 在线数据（零依赖，纯标准库）
 2. `trend-analysis.py` 每天分析趋势，产出 Top 10 建站候选清单
 3. 把清单里的游戏名喂给 Step 1
