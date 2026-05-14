@@ -20,11 +20,10 @@
 ```
 sitebuilder/
 ├── README.md
-├── roblox-monitor/          # 📊 Roblox 游戏趋势监控（数据驱动选游戏）
-│   ├── README.md            # 使用说明
-│   └── scripts/
-│       ├── collect.py       # 采集 Rolimons 在线数据 → SQLite
-│       └── trend-analysis.py # 趋势分析 → 建站候选清单 Top10
+├── monitors/                # 📊 多平台趋势监控
+│   ├── roblox/              # Roblox 游戏监控
+│   ├── steam/               # Steam 热门游戏监控
+│   └── crazygames/          # CrazyGames 新游戏监控
 ├── step1-research/          # Step 1: 素材采集与游戏研究
 │   ├── SKILL.md             # 调度文件（总览）
 │   ├── step1a-identity-sources.md   # 1a: 游戏身份确认 + 官方源锁定
@@ -95,17 +94,22 @@ sitebuilder/
 
 ## 使用方式
 
-### 选游戏：roblox-monitor（可选，数据驱动）
+### 选游戏：monitors（多平台数据驱动）
 
-在跑 Step 1 之前，可以用 `roblox-monitor/` 自动筛选值得做的游戏：
+在跑 Step 1 之前，可以使用 `monitors/` 下的工具筛选值得做的游戏：
 
-## 更新日志
+- **Roblox**: 采集 Rolimons 数据，分析爆发潜力和新游戏。
+- **Steam**: 监控 Steam Top Sellers 榜单。
+- **CrazyGames**: 监控 CrazyGames 的新游戏发布（New Games）。
 
-- **2026-05-14**: 修复了 `roblox-monitor/scripts/collect.py` 中的 403 Forbidden 错误。通过更新 `User-Agent` 和添加 `Accept` 等请求头，成功恢复了对 Rolimons API 的访问。执行了首次数据采集，成功获取 6706 个游戏快照。
+#### 设置定时任务（每 4 小时运行一次）
 
+建议在终端运行 `crontab -e` 并添加以下行：
 
-1. `collect.py` 每小时采集 Rolimons 在线数据（零依赖，纯标准库）
-2. `trend-analysis.py` 每天分析趋势，产出 Top 10 建站候选清单
+```bash
+0 */4 * * * cd /Users/jacklee/Desktop/code/sitebuilder && python3 monitors/roblox/scripts/collect.py && python3 monitors/steam/scripts/collect.py && python3 monitors/crazygames/scripts/collect.py >> monitors/collect.log 2>&1
+```
+
 3. 把清单里的游戏名喂给 Step 1
 
 适合"不知道做什么游戏"的场景。已有目标游戏可跳过此步。
@@ -138,3 +142,11 @@ sitebuilder/
 - 每个步骤中的模型别名（如 `ikgpt54`、`ho`、`hg`）是 OpenClaw 内部配置，使用时需要替换为实际可用的模型
 - `agent-reach` 和 `bb-browser` 是外部 CLI 工具，需要单独安装配置
 - 文件中的 `~/workspace/` 路径需根据实际工作区位置调整
+
+## 更新日志
+
+- **2026-05-14**: 
+  - 修复了 `roblox-monitor` 的 403 错误并将其迁移至 `monitors/roblox`。
+  - 新增 `monitors/steam` 监控，支持抓取 Steam Top Sellers。
+  - 新增 `monitors/crazygames` 监控，支持抓取 CrazyGames New Games。
+  - 统一了多平台监控架构。
