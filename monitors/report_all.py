@@ -95,7 +95,7 @@ def analyze_roblox():
         prev_ts = timestamps[1][0] if len(timestamps) > 1 else latest_ts
         
         q = """
-        SELECT name, players, 
+        SELECT game_id, name, players, 
                (SELECT players FROM snapshots s2 WHERE s2.game_id = s1.game_id AND s2.timestamp = ?) as prev_players
         FROM snapshots s1
         WHERE timestamp = ?
@@ -106,13 +106,15 @@ def analyze_roblox():
         conn.close()
         
         lines = []
-        for name, curr, prev in rows:
+        for gid, name, curr, prev in rows:
             prev = prev if prev is not None else 0
             change_str = ""
             if prev > 0:
                 diff = ((curr - prev) / prev) * 100
                 change_str = f" ({'+' if diff > 0 else ''}{diff:.1f}%)"
-            lines.append(f"- **{name}**: {curr:,} 在线{change_str}")
+            # Roblox universe link
+            link = f"https://www.roblox.com/games/{gid}"
+            lines.append(f"- **[{name}]({link})**: {curr:,} 在线{change_str}")
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -155,6 +157,53 @@ def generate_trends_analysis(new_games):
             
     return "\n".join(sections)
 
+def analyze_steam():
+    conn = get_db_connection("steam")
+    if not conn: return "❌ 数据库未找到"
+    
+    try:
+        latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
+        rows = conn.execute("SELECT game_id, name FROM snapshots WHERE timestamp = ? LIMIT 10", (latest_ts,)).fetchall()
+        conn.close()
+        lines = []
+        for gid, name in rows:
+            link = f"https://store.steampowered.com/app/{gid}"
+            lines.append(f"- **[{name}]({link})**")
+        return "\n".join(lines)
+    except Exception as e:
+        return f"⚠️ 分析错误: {e}"
+
+def analyze_crazygames():
+    conn = get_db_connection("crazygames")
+    if not conn: return "❌ 数据库未找到"
+    
+    try:
+        latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
+        rows = conn.execute("SELECT name, slug, category FROM snapshots WHERE timestamp = ? LIMIT 10", (latest_ts,)).fetchall()
+        conn.close()
+        lines = []
+        for name, slug, cat in rows:
+            link = f"https://www.crazygames.com/game/{slug}"
+            lines.append(f"- **[{name}]({link})** *[{cat}]*")
+        return "\n".join(lines)
+    except Exception as e:
+        return f"⚠️ 分析错误: {e}"
+
+def analyze_itch():
+    conn = get_db_connection("itch")
+    if not conn: return "❌ 数据库未找到"
+    
+    try:
+        latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
+        rows = conn.execute("SELECT name, link, author FROM snapshots WHERE timestamp = ? LIMIT 10", (latest_ts,)).fetchall()
+        conn.close()
+        lines = []
+        for name, link, author in rows:
+            lines.append(f"- **[{name}]({link})** *by {author}*")
+        return "\n".join(lines)
+    except Exception as e:
+        return f"⚠️ 分析错误: {e}"
+
 def main():
     now = datetime.now(timezone.utc)
     ts_str = now.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -175,6 +224,9 @@ def main():
     
     # 4. 基础热度分析
     roblox_data = analyze_roblox()
+    steam_data = analyze_steam()
+    crazy_data = analyze_crazygames()
+    itch_data = analyze_itch()
     
     report_content = f"""# 🌐 Sitebuilder 全平台趋势简报
 > 生成时间: {ts_str}
@@ -185,6 +237,15 @@ def main():
 
 ## 🎮 Roblox 实时热度 (Top 10)
 {roblox_data}
+
+## 🚂 Steam 市场动态 (Top Sellers)
+{steam_data}
+
+## ⚡ CrazyGames 网页端新盘
+{crazy_data}
+
+## 🎨 itch.io 独立游戏动态
+{itch_data}
 
 ---
 ## 💡 建站决策建议 (基于反推逻辑)
