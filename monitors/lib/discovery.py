@@ -75,3 +75,88 @@ def discover_steam_new():
             game_urls.append({"name": name, "id": app_id, "url": loc, "platform": "steam"})
             
     return game_urls
+
+CUSTOM_SITES = [
+    "block-blast.io",
+    "chillguyclicker.io",
+    "escaperoadcity2.io",
+    "azgames.io",
+    "1games.io",
+    "dinosaur-game.io",
+    "spacewavesgame.io",
+    "thatsnot-myneighbor.io",
+    "crossy-road.io",
+    "game-game.com",
+    "curverush.com",
+    "escaperoad2.io",
+    "geometryvibes.io",
+    "www.bestgames.com",
+    "brain-lines.io",
+    "elonplayground.io",
+    "www.blipzi.com",
+    "www.gamenora.com",
+    "dashmetry.com",
+    "melonplayground.io",
+    "y8.com",
+    "poki.com",
+    "addictinggames.com",
+    "html5games.com",
+    "onlinegames.io",
+    "twoplayergames.org",
+    "kongregate.com",
+    "blog.gamedistribution.com"
+]
+
+# Mapping of domains to specific sitemap URLs if the default ones fail
+SITEMAP_OVERRIDES = {
+    "y8.com": ["https://www.y8.com/sitemaps/y8/en/sitemap.xml.gz"],
+    "poki.com": ["https://poki.com/en/sitemaps/index.xml"],
+    "twoplayergames.org": ["https://www.twoplayergames.org/sitemap-games.xml"],
+    "html5games.com": ["https://play.famobi.com/sitemap.xml"],
+    "blog.gamedistribution.com": ["https://blog.gamedistribution.com/sitemap.xml"]
+}
+
+def discover_custom_sites():
+    """Finds new game URLs from a list of custom domains' sitemaps."""
+    all_game_urls = []
+    
+    for domain in CUSTOM_SITES:
+        # Use overrides if available, otherwise try common locations
+        sitemap_urls = SITEMAP_OVERRIDES.get(domain, [
+            f"https://{domain}/sitemap.xml",
+            f"https://{domain}/sitemap_index.xml"
+        ])
+        
+        for sitemap_url in sitemap_urls:
+            try:
+                content = fetch_sitemap(sitemap_url)
+                if not content:
+                    continue
+                    
+                items = parse_sitemap(content)
+                if not items:
+                    continue
+                
+                # If it's a sitemap index, we should ideally parse the sub-sitemaps
+                # But for simplicity and focus on "newest", we'll just take the URLs
+                # and assume they might be games.
+                
+                # Filter for likely game URLs (this is heuristic)
+                for item in items[-20:]: # Only check last 20 per sitemap to keep it fast
+                    loc = item['loc']
+                    # Basic heuristic: if it's not the homepage and has some path
+                    if loc.strip("/") != f"https://{domain}".strip("/"):
+                        # Extract a name from the URL
+                        path = loc.strip("/").split("/")[-1]
+                        name = path.replace("-", " ").title()
+                        all_game_urls.append({
+                            "name": f"[{domain}] {name}",
+                            "slug": loc, # Use full URL as slug/ID for uniqueness
+                            "url": loc,
+                            "platform": "general"
+                        })
+                break # If we successfully got items from one sitemap location, move to next domain
+            except Exception as e:
+                print(f"⚠️ Failed to parse sitemap for {domain} at {sitemap_url}: {e}")
+                
+    return all_game_urls

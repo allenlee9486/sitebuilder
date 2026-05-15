@@ -16,7 +16,7 @@ from datetime import datetime, timezone, timedelta
 # 确保可以导入 lib 模块
 sys.path.append(str(Path(__file__).parent))
 
-from lib.discovery import discover_crazygames_new, discover_itch_new, discover_steam_new
+from lib.discovery import discover_crazygames_new, discover_itch_new, discover_steam_new, discover_custom_sites
 from lib.trends_analyzer import TrendsAnalyzer
 
 MONITORS_DIR = Path(__file__).parent
@@ -37,7 +37,8 @@ def get_db_connection(platform):
         "roblox": MONITORS_DIR / "roblox" / "data" / "roblox-trends.db",
         "steam": MONITORS_DIR / "steam" / "data" / "steam-trends.db",
         "crazygames": MONITORS_DIR / "crazygames" / "data" / "crazygames.db",
-        "itch": MONITORS_DIR / "itch" / "data" / "itch.db"
+        "itch": MONITORS_DIR / "itch" / "data" / "itch.db",
+        "general": MONITORS_DIR / "general" / "data" / "general.db"
     }
     path = db_map.get(platform)
     if path and path.exists():
@@ -52,7 +53,8 @@ def get_new_games_from_sitemaps():
     platforms = {
         "steam": discover_steam_new,
         "crazygames": discover_crazygames_new,
-        "itch": discover_itch_new
+        "itch": discover_itch_new,
+        "general": discover_custom_sites
     }
     
     for platform, discover_fn in platforms.items():
@@ -122,13 +124,14 @@ def analyze_roblox():
 def generate_trends_analysis(new_games):
     """对新发现的游戏进行 Google Trends 对比分析"""
     if not new_games:
-        return "✨ 暂无新发现的游戏需要进行 Trends 分析。"
+        return "✨ 暂无新发现的游戏需要进行 Trends 分析。", []
     
     analyzer = TrendsAnalyzer()
     sections = []
+    recommendations = []
     
-    # 为了演示和效率，只分析前 5 个最“新”的
-    to_analyze = new_games[:5]
+    # 为了演示和效率，只分析前 10 个最“新”的 (增加分析范围)
+    to_analyze = new_games[:10]
     print(f"📈 正在对 {len(to_analyze)} 个重点新游戏进行 Google Trends 分析 (Benchmark: GPTs)...")
     
     for game in to_analyze:
@@ -137,17 +140,28 @@ def generate_trends_analysis(new_games):
         
         if res:
             badge = "⚪ 观察中"
-            warning = ""
+            score = 0
             if res['exceeded']:
                 badge = "🔴 **强烈推荐 (EXPLOSIVE)**"
-                warning = "\n> ⚠️ **警告**: 该游戏趋势已突破 GPTs 基准线！"
+                score = 100
             elif res['latest_keyword'] > res['latest_benchmark'] * 0.7:
                 badge = "🟠 **重点关注 (HOT)**"
+                score = 70
             elif res['is_rising']:
                 badge = "🟡 **潜力品种 (RISING)**"
+                score = 40
             
+            if score >= 40:
+                recommendations.append({
+                    "name": name,
+                    "score": score,
+                    "platform": game['platform'],
+                    "url": game['url'],
+                    "badge": badge
+                })
+
             section = f"### [{game['platform'].upper()}] {name}\n"
-            section += f"- **趋势评级**: {badge}{warning}\n"
+            section += f"- **趋势评级**: {badge}\n"
             section += f"- **数据对比**: {name} (`{res['latest_keyword']}`) vs GPTs (`{res['latest_benchmark']}`)\n"
             section += f"- **平均热度**: {res['avg_keyword']} (基准 GPTs: {res['avg_benchmark']})\n"
             section += f"- **原始链接**: [点击访问]({game['url']})\n"
@@ -155,7 +169,7 @@ def generate_trends_analysis(new_games):
         else:
             sections.append(f"### [{game['platform'].upper()}] {name}\n- ⚠️ Trends 数据暂不可用或搜索量过低\n- **链接**: [点击访问]({game['url']})")
             
-    return "\n".join(sections)
+    return "\n".join(sections), recommendations
 
 def analyze_steam():
     conn = get_db_connection("steam")
@@ -220,8 +234,18 @@ def main():
     new_discovery = get_new_games_from_sitemaps()
     
     # 3. Trends 分析
-    trends_section = generate_trends_analysis(new_discovery)
+    trends_section, recommendations = generate_trends_analysis(new_discovery)
     
+    # 3.1 生成潜力值汇总
+    potential_summary = "✨ 暂无高潜力新盘推荐。"
+    if recommendations:
+        # 按分数降序排列
+        recommendations.sort(key=lambda x: x['score'], reverse=True)
+        rec_lines = []
+        for rec in recommendations[:3]: # 取前 3 个
+            rec_lines.append(f"1. **{rec['name']}** ({rec['platform'].upper()}) - {rec['badge']} [立即研究]({rec['url']})")
+        potential_summary = "\n".join(rec_lines)
+
     # 4. 基础热度分析
     roblox_data = analyze_roblox()
     steam_data = analyze_steam()
@@ -230,7 +254,11 @@ def main():
     
     report_content = f"""# 🌐 Sitebuilder 全平台趋势简报
 > 生成时间: {ts_str}
-> 核心策略: Sitemap 发现 + Google Trends (Global, 7 Days) vs GPTs 基准
+
+## 🎯 今日潜力建站推荐 (Top 3)
+{potential_summary}
+
+---
 
 ## 🚨 实时趋势预警 & 新盘发现
 {trends_section}
