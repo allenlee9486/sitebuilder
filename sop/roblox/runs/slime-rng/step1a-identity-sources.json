@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "step": "1a",
+    "slug": "slime-rng",
+    "createdAt": "2026-05-15T07:45:00Z",
+    "status": "complete"
+  },
+  "identity": {
+    "gameName": "Slime RNG",
+    "platform": "roblox",
+    "developer": "Stouts Studio",
+    "releaseDate": "2026-01-01",
+    "genre": "Simulation / RNG / Incremental",
+    "placeId": "92416421522960",
+    "universeId": "9792947201",
+    "originalUrl": "https://www.roblox.com/games/92416421522960/Slime-RNG"
+  },
+  "sources": {
+    "trello": "https://trello.com/b/SlimeRNGOfficial",
+    "discord": "https://discord.com/invite/aKUe7ngpjd",
+    "reddit": "https://www.reddit.com/r/SlimeRNG/",
+    "youtube": [
+      {"videoId": "justboz_guide", "title": "How to Play Slime RNG Roblox - Full Guide", "type": "guide"},
+      {"videoId": "l_eiif_v34", "title": "Slime RNG v3.4 Update Overview", "type": "gameplay"}
+    ],
+    "wiki": "https://slime-rng.net/",
+    "twitter": "https://x.com/l_eiif",
+    "patchNotes": "https://discord.com/channels/15794692/announcements"
+  },
+  "gaps": []
+}

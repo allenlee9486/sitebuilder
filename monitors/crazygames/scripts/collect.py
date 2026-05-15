@@ -55,30 +55,37 @@ def fetch_new_games():
     games_list = []
     try:
         # 路径 1
-        games_list = data['props']['pageProps']['data']['games']
+        raw_data = data['props']['pageProps']['data']['games']
+        if isinstance(raw_data, list):
+            games_list = raw_data
+        elif isinstance(raw_data, dict) and 'items' in raw_data:
+            games_list = raw_data['items']
     except (KeyError, TypeError):
         try:
             # 路径 2
-            games_list = data['props']['pageProps']['games']
+            raw_data = data['props']['pageProps']['games']
+            if isinstance(raw_data, list):
+                games_list = raw_data
+            elif isinstance(raw_data, dict) and 'items' in raw_data:
+                games_list = raw_data['items']
         except (KeyError, TypeError):
             print("⚠️ Could not find games list in expected JSON paths")
     
     results = []
     for g in games_list:
-        if isinstance(g, dict):
-            results.append({
-                "id": str(g.get('id', '')),
-                "name": g.get('name', 'Unknown'),
-                "slug": g.get('slug', ''),
-                "category": g.get('categoryName', 'Unknown')
-            })
-        elif isinstance(g, str):
-            results.append({
-                "id": g,
-                "name": g,
-                "slug": g,
-                "category": "Unknown"
-            })
+        if not isinstance(g, dict):
+            continue
+            
+        # 过滤掉非游戏对象
+        if 'slug' not in g:
+            continue
+            
+        results.append({
+            "id": str(g.get('id', '')),
+            "name": g.get('name', 'Unknown'),
+            "slug": g.get('slug', ''),
+            "category": g.get('categoryName', 'Unknown')
+        })
     return results
 
 def main():

@@ -10,6 +10,8 @@ import json
 import os
 import sys
 import subprocess
+import urllib.request
+import time
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
@@ -18,6 +20,177 @@ sys.path.append(str(Path(__file__).parent))
 
 from lib.discovery import discover_crazygames_new, discover_itch_new, discover_steam_new, discover_custom_sites
 from lib.trends_analyzer import TrendsAnalyzer
+
+# --- Roblox 元数据补全 ---
+
+def enrich_roblox_metadata(conn):
+    """补全 Roblox 游戏的真实创建时间"""
+    cursor = conn.cursor()
+    # 优先补全活跃人数高的游戏
+    cursor.execute("""
+        SELECT DISTINCT game_id 
+        FROM snapshots 
+        WHERE timestamp = (SELECT MAX(timestamp) FROM snapshots)
+        AND game_id IN (SELECT game_id FROM first_seen WHERE created_at IS NULL)
+        ORDER BY players DESC
+        LIMIT 50
+    """)
+    rows = cursor.fetchall()
+    if not rows:
+        return
+
+    print(f"🔄 正在补全 {len(rows)} 个 Roblox 热门游戏的原始元数据...")
+    
+    place_ids = [row[0] for row in rows]
+    place_to_universe = {}
+    
+    for pid in place_ids:
+        try:
+            url = f"https://apis.roblox.com/universes/v1/places/{pid}/universe"
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                data = json.loads(resp.read())
+                uid = data.get("universeId")
+                if uid:
+                    place_to_universe[pid] = str(uid)
+            time.sleep(0.1)
+        except:
+            continue
+            
+    if not place_to_universe:
+        return
+        
+    universe_ids = list(set(place_to_universe.values()))
+    game_info_map = {}
+    
+    # 批量获取 (Roblox API 限制每次 ~50-100)
+    for i in range(0, len(universe_ids), 50):
+        batch = universe_ids[i:i+50]
+        try:
+            ids_str = ",".join(map(str, batch))
+            url = f"https://games.roblox.com/v1/games?universeIds={ids_str}"
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read())
+                for g in data.get('data', []):
+                    game_info_map[str(g['id'])] = g
+            time.sleep(0.2)
+        except:
+            continue
+
+    for pid, uid in place_to_universe.items():
+        info = game_info_map.get(uid)
+        if info:
+            created_at = info.get('created', '').split('T')[0]
+            cursor.execute(
+                "UPDATE first_seen SET universe_id = ?, created_at = ? WHERE game_id = ?",
+                (uid, created_at, pid)
+            )
+    conn.commit()
+
+# --- Steam 元数据补全 ---
+
+def enrich_steam_metadata(conn):
+    """补全 Steam 游戏的真实发布日期"""
+    cursor = conn.cursor()
+    cursor.execute("SELECT game_id FROM first_seen WHERE created_at IS NULL LIMIT 50")
+    rows = cursor.fetchall()
+    if not rows:
+        return
+
+    print(f"🔄 正在补全 {len(rows)} 个 Steam 游戏的原始发布日期...")
+    for (app_id,) in rows:
+        try:
+            url = f"https://store.steampowered.com/api/appdetails?appids={app_id}"
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read())
+                if data and str(app_id) in data and data[str(app_id)]['success']:
+                    release_info = data[str(app_id)]['data'].get('release_date', {})
+                    date_str = release_info.get('date', '')
+                    clean_date = None
+                    
+                    # 尝试解析多种日期格式
+                    formats = ["%d %b, %Y", "%b %d, %Y", "%Y-%m-%d", "%d %B %Y", "%B %d %Y"]
+                    for fmt in formats:
+                        try:
+                            dt = datetime.strptime(date_str, fmt)
+                            clean_date = dt.strftime("%Y-%m-%d")
+                            break
+                        except ValueError: continue
+                    
+                    if not clean_date:
+                        # 尝试更简单的正则提取 YYYY
+                        year_match = re.search(r'(\d{4})', date_str)
+                        if year_match: clean_date = f"{year_match.group(1)}-01-01"
+                    
+                    if clean_date:
+                        cursor.execute("UPDATE first_seen SET created_at = ? WHERE game_id = ?", (clean_date, app_id))
+            time.sleep(0.5)
+        except Exception as e:
+            continue
+    conn.commit()
+
+def enrich_general_metadata(conn, platform):
+    """补全通用平台（CrazyGames, itch.io）的发布日期"""
+    cursor = conn.cursor()
+    # 增加补全数量
+    cursor.execute("SELECT game_id, name FROM first_seen WHERE created_at IS NULL LIMIT 30")
+    rows = cursor.fetchall()
+    if not rows:
+        return
+
+    print(f"🔄 正在补全 {len(rows)} 个 {platform} 游戏的发布日期...")
+    for game_id, name in rows:
+        try:
+            url = game_id if game_id.startswith("http") else f"https://www.{platform}.com/game/{game_id}"
+            if platform == "itch": url = game_id
+            
+            headers = {"User-Agent": "Mozilla/5.0"}
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                content = resp.read().decode('utf-8')
+                found_date = None
+                
+                # 增强的正则匹配
+                if platform == "crazygames":
+                    date_patterns = [
+                        r'"datePublished"\s*:\s*"(.*?)"',
+                        r'"firstPublishedAt"\s*:\s*"(.*?)"',
+                        r'"dateCreated"\s*:\s*"(.*?)"'
+                    ]
+                elif platform == "itch":
+                    date_patterns = [
+                        r'published_at&quot;:&quot;(.*?)&quot;',
+                        r'"datePublished"\s*content="(.*?)"',
+                        r'datetime="(.*?)"',
+                        r'"published_at"\s*:\s*"(.*?)"',
+                        r'Published\s*</span>\s*<abbr\s*title="(.*?)"'
+                    ]
+                
+                for pattern in date_patterns:
+                    match = re.search(pattern, content, re.IGNORECASE | re.DOTALL)
+                    if match:
+                        found_date_raw = match.group(1).strip()
+                        found_date = found_date_raw.split(' ')[0].split('T')[0]
+                        
+                        # 处理 "12 days ago"
+                        if "ago" in found_date_raw.lower():
+                            days_match = re.search(r'(\d+)\s*day', found_date_raw, re.I)
+                            if days_match:
+                                days = int(days_match.group(1))
+                                found_date = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%d")
+                            elif "yesterday" in found_date_raw.lower():
+                                found_date = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+                        
+                        if re.match(r'^\d{4}-\d{2}-\d{2}', found_date):
+                            print(f"  ✅ Found date for {name}: {found_date}")
+                            cursor.execute("UPDATE first_seen SET created_at = ? WHERE game_id = ?", (found_date, game_id))
+                            break
+            time.sleep(0.3)
+        except:
+            continue
+    conn.commit()
 
 MONITORS_DIR = Path(__file__).parent
 REPORT_DIR = MONITORS_DIR / "data" / "reports"
@@ -85,41 +258,147 @@ def get_new_games_from_sitemaps():
             
     return all_new
 
+# 排除掉那些老牌大盘，即使数据库是刚建立的
+ROBLOX_GIANT_BLACKLIST = [
+    "4924922222", # Brookhaven
+    "920587237",  # Adopt Me!
+    "2753915549", # Blox Fruits
+    "142823291",  # Murder Mystery 2
+    "8737899170", # Pet Simulator 99
+    "6872265039", # BedWars
+    "15532962292",# Sol's RNG
+    "10449761463",# The Strongest Battlegrounds
+    "9391468976", # Jujutsu Shenanigans
+    "17625359962",# RIVALS
+    "12985361032",# Metro Life
+    "18687417158",# Forsaken (Original)
+    "79546208627805", # 99 Nights in the Forest
+    "109983668079237", # Steal a Brainrot
+    "89469502395769", # Kick a Lucky Block
+    "95082159892680", # +1 Speed Keyboard Escape
+]
+
 def analyze_roblox():
     conn = get_db_connection("roblox")
-    if not conn: return "❌ 数据库未找到"
+    if not conn: return "❌ 数据库未找到", []
     
     try:
-        timestamps = conn.execute("SELECT DISTINCT timestamp FROM snapshots ORDER BY timestamp DESC LIMIT 2").fetchall()
-        if len(timestamps) < 1: return "⚠️ 数据不足"
+        # 0. 补全元数据
+        enrich_roblox_metadata(conn)
         
-        latest_ts = timestamps[0][0]
-        prev_ts = timestamps[1][0] if len(timestamps) > 1 else latest_ts
+        # 1. 获取最新时间戳和相关时间窗口
+        max_ts_row = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()
+        if not max_ts_row or not max_ts_row[0]: return "⚠️ 数据不足", []
         
+        max_ts = max_ts_row[0]
+        try:
+            now_utc = datetime.strptime(max_ts, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        except ValueError:
+            now_utc = datetime.strptime(max_ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+            
+        t24 = (now_utc - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        t72 = (now_utc - timedelta(hours=72)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        # 2. 趋势分析查询
         q = """
-        SELECT game_id, name, players, 
-               (SELECT players FROM snapshots s2 WHERE s2.game_id = s1.game_id AND s2.timestamp = ?) as prev_players
-        FROM snapshots s1
-        WHERE timestamp = ?
-        ORDER BY players DESC
-        LIMIT 10
+        WITH stats AS (
+            SELECT 
+                game_id, 
+                MAX(name) as name,
+                AVG(CASE WHEN timestamp >= ? THEN players ELSE NULL END) as avg_24h,
+                AVG(CASE WHEN timestamp >= ? AND timestamp < ? THEN players ELSE NULL END) as avg_prev_72h
+            FROM snapshots
+            GROUP BY game_id
+        ),
+        age_info AS (
+            SELECT game_id, first_date, created_at
+            FROM first_seen
+        )
+        SELECT 
+            s.game_id, s.name, s.avg_24h, s.avg_prev_72h, a.first_date, a.created_at
+        FROM stats s
+        LEFT JOIN age_info a ON s.game_id = a.game_id
+        WHERE s.avg_24h > 200
+        ORDER BY s.avg_24h DESC
         """
-        rows = conn.execute(q, (prev_ts, latest_ts)).fetchall()
+        
+        rows = conn.execute(q, (t24, t72, t24)).fetchall()
         conn.close()
         
-        lines = []
-        for gid, name, curr, prev in rows:
-            prev = prev if prev is not None else 0
-            change_str = ""
-            if prev > 0:
-                diff = ((curr - prev) / prev) * 100
-                change_str = f" ({'+' if diff > 0 else ''}{diff:.1f}%)"
-            # Roblox universe link
-            link = f"https://www.roblox.com/games/{gid}"
-            lines.append(f"- **[{name}]({link})**: {curr:,} 在线{change_str}")
-        return "\n".join(lines)
+        rising_stars = []
+        display_lines = []
+        
+        for gid, name, curr_avg, prev_avg, first_date, created_at in rows:
+            if gid in ROBLOX_GIANT_BLACKLIST:
+                continue
+                
+            curr_avg = curr_avg or 0
+            prev_avg = prev_avg or 0
+            growth = 0
+            if prev_avg > 0:
+                growth = ((curr_avg - prev_avg) / prev_avg) * 100
+            
+            # 严格的新盘判定逻辑
+            is_new = False
+            age = 999
+            if created_at:
+                fd = datetime.strptime(created_at, "%Y-%m-%d").date()
+                age = (now_utc.date() - fd).days
+                # 只有真实创建于 30 天内的才叫新盘
+                if age <= 30:
+                    is_new = True
+            
+            # 如果没有抓到创建时间，绝对不标注为“新盘”，仅标注“监控新发现”
+            is_discovery = False
+            if not created_at and first_date:
+                fd = datetime.strptime(first_date, "%Y-%m-%d").date()
+                if (now_utc.date() - fd).days <= 2:
+                    is_discovery = True
+
+            # 评分逻辑
+            score = 0
+            if is_new:
+                score += 60
+                if age <= 7: score += 20
+            elif is_discovery:
+                score += 20 # 仅作为发现分
+            
+            if growth > 30: score += 30
+            if growth > 100: score += 40
+            
+            score += min(curr_avg / 2000, 10)
+
+            # 标签
+            tags = []
+            if is_new: 
+                tags.append(f"🆕 新盘 ({age}d)")
+            elif is_discovery:
+                tags.append("🔍 监控新发现")
+            
+            if growth > 30: 
+                tags.append(f"🚀 暴涨 {growth:.0f}%")
+            
+            status_str = " | ".join(tags) if tags else "活跃"
+            
+            # 推荐门槛：必须是新盘且有一定热度，或者老盘但有极高增长
+            if (is_new and curr_avg > 500) or (growth > 50 and curr_avg > 1000):
+                rising_stars.append({
+                    "name": name,
+                    "score": score,
+                    "platform": "roblox",
+                    "url": f"https://www.roblox.com/games/{gid}",
+                    "badge": f"⭐ {score:.0f} [{status_str}]"
+                })
+
+            if len(display_lines) < 12:
+                link = f"https://www.roblox.com/games/{gid}"
+                display_lines.append(f"- **[{name}]({link})**: {int(curr_avg):,} 在线 ({status_str})")
+
+        return "\n".join(display_lines), rising_stars
     except Exception as e:
-        return f"⚠️ 分析错误: {e}"
+        import traceback
+        print(traceback.format_exc())
+        return f"⚠️ 分析错误: {e}", []
 
 def generate_trends_analysis(new_games):
     """对新发现的游戏进行 Google Trends 对比分析"""
@@ -171,18 +450,59 @@ def generate_trends_analysis(new_games):
             
     return "\n".join(sections), recommendations
 
+# Steam 巨头黑名单
+STEAM_GIANT_BLACKLIST = [
+    "730",     # Counter-Strike 2
+    "578080",  # PUBG
+    "1172470", # Apex Legends
+    "2344520", # Diablo IV
+    "1665460", # eFootball
+    "2483190", # Forza Horizon 6 (用户提到的老游戏/大IP)
+    "1962700", # Subnautica 2
+]
+
 def analyze_steam():
     conn = get_db_connection("steam")
     if not conn: return "❌ 数据库未找到"
     
     try:
+        # 补全元数据
+        enrich_steam_metadata(conn)
+        
         latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
-        rows = conn.execute("SELECT game_id, name FROM snapshots WHERE timestamp = ? LIMIT 10", (latest_ts,)).fetchall()
+        q = """
+        SELECT s.game_id, s.name, f.created_at, f.first_date
+        FROM snapshots s
+        JOIN first_seen f ON s.game_id = f.game_id
+        WHERE s.timestamp = ?
+        ORDER BY s.players DESC
+        LIMIT 30
+        """
+        rows = conn.execute(q, (latest_ts,)).fetchall()
         conn.close()
+        
         lines = []
-        for gid, name in rows:
+        now = datetime.now(timezone.utc).date()
+        
+        for gid, name, created_at, first_date in rows:
+            if gid in STEAM_GIANT_BLACKLIST:
+                continue
+                
+            is_new = False
+            age_str = ""
+            if created_at:
+                try:
+                    dt = datetime.strptime(created_at, "%Y-%m-%d").date()
+                    age = (now - dt).days
+                    if age <= 45: # Steam 稍微放宽一点，因为 API 同步有时差
+                        is_new = True
+                        age_str = f" (🆕 {age}d)"
+                except: pass
+            
             link = f"https://store.steampowered.com/app/{gid}"
-            lines.append(f"- **[{name}]({link})**")
+            tag = " [NEW]" if is_new else ""
+            lines.append(f"- **[{name}]({link})**{age_str}{tag}")
+            if len(lines) >= 12: break
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -192,13 +512,40 @@ def analyze_crazygames():
     if not conn: return "❌ 数据库未找到"
     
     try:
+        # 补全元数据
+        enrich_general_metadata(conn, "crazygames")
+        
         latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
-        rows = conn.execute("SELECT name, slug, category FROM snapshots WHERE timestamp = ? LIMIT 10", (latest_ts,)).fetchall()
+        # 优先显示新盘
+        q = """
+        SELECT s.name, s.slug, s.category, f.created_at
+        FROM snapshots s
+        JOIN first_seen f ON s.game_id = f.game_id
+        WHERE s.timestamp = ?
+        ORDER BY (f.created_at IS NOT NULL AND f.created_at > date('now', '-30 days')) DESC, s.name ASC
+        LIMIT 15
+        """
+        rows = conn.execute(q, (latest_ts,)).fetchall()
         conn.close()
+        
         lines = []
-        for name, slug, cat in rows:
+        now = datetime.now(timezone.utc).date()
+        
+        for name, slug, cat, created_at in rows:
+            is_new = False
+            age_str = ""
+            if created_at:
+                try:
+                    dt = datetime.strptime(created_at, "%Y-%m-%d").date()
+                    age = (now - dt).days
+                    if age <= 45: 
+                        is_new = True
+                        age_str = f" (🆕 {age}d)"
+                except: pass
+                
             link = f"https://www.crazygames.com/game/{slug}"
-            lines.append(f"- **[{name}]({link})** *[{cat}]*")
+            tag = " [NEW]" if is_new else ""
+            lines.append(f"- **[{name}]({link})** *[{cat}]*{age_str}{tag}")
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -208,12 +555,39 @@ def analyze_itch():
     if not conn: return "❌ 数据库未找到"
     
     try:
+        # 补全元数据
+        enrich_general_metadata(conn, "itch")
+        
         latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
-        rows = conn.execute("SELECT name, link, author FROM snapshots WHERE timestamp = ? LIMIT 10", (latest_ts,)).fetchall()
+        # 优先显示新盘
+        q = """
+        SELECT s.name, s.link, s.author, f.created_at
+        FROM snapshots s
+        JOIN first_seen f ON s.game_id = f.game_id
+        WHERE s.timestamp = ?
+        ORDER BY (f.created_at IS NOT NULL AND f.created_at > date('now', '-30 days')) DESC, s.name ASC
+        LIMIT 15
+        """
+        rows = conn.execute(q, (latest_ts,)).fetchall()
         conn.close()
+        
         lines = []
-        for name, link, author in rows:
-            lines.append(f"- **[{name}]({link})** *by {author}*")
+        now = datetime.now(timezone.utc).date()
+        
+        for name, link, author, created_at in rows:
+            is_new = False
+            age_str = ""
+            if created_at:
+                try:
+                    dt = datetime.strptime(created_at, "%Y-%m-%d").date()
+                    age = (now - dt).days
+                    if age <= 45: 
+                        is_new = True
+                        age_str = f" (🆕 {age}d)"
+                except: pass
+                
+            tag = " [NEW]" if is_new else ""
+            lines.append(f"- **[{name}]({link})** *by {author}*{age_str}{tag}")
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -247,15 +621,63 @@ def main():
         potential_summary = "\n".join(rec_lines)
 
     # 4. 基础热度分析
-    roblox_data = analyze_roblox()
+    roblox_data, roblox_stars = analyze_roblox()
     steam_data = analyze_steam()
     crazy_data = analyze_crazygames()
     itch_data = analyze_itch()
     
+    # 5. 综合潜力建站推荐 (全平台新盘聚合)
+    # 我们不仅看 Sitemap 发现的，也看各平台 API 抓取到的新爆盘
+    
+    # 5.1 收集各平台的新盘 (真实 30 天内)
+    platform_new_stars = []
+    
+    # 从 Steam 提取新盘
+    steam_conn = get_db_connection("steam")
+    if steam_conn:
+        now = datetime.now(timezone.utc).date()
+        q = "SELECT name, game_id, created_at FROM first_seen WHERE created_at IS NOT NULL"
+        for name, gid, created_at in steam_conn.execute(q).fetchall():
+            try:
+                dt = datetime.strptime(created_at, "%Y-%m-%d").date()
+                if (now - dt).days <= 30:
+                    platform_new_stars.append({
+                        "name": name, "score": 75, "platform": "steam", 
+                        "url": f"https://store.steampowered.com/app/{gid}",
+                        "badge": f"⭐ 75 [🆕 新盘 ({(now-dt).days}d)]"
+                    })
+            except: pass
+        steam_conn.close()
+
+    # 合并所有潜力新盘
+    all_recommendations = recommendations + roblox_stars + platform_new_stars
+    
+    # 5.2 对这些新盘进行 Trends 验证 (如果还没做的话)
+    # 这里为了效率，如果已经在 recommendations 里就不重复做了
+    
+    potential_summary = "✨ 暂无高潜力新盘推荐。"
+    if all_recommendations:
+        # 按分数降序排列
+        all_recommendations.sort(key=lambda x: x['score'], reverse=True)
+        # 去重 (根据 URL)
+        seen_urls = set()
+        unique_recs = []
+        for r in all_recommendations:
+            if r['url'] not in seen_urls:
+                unique_recs.append(r)
+                seen_urls.add(r['url'])
+        
+        rec_lines = []
+        for i, rec in enumerate(unique_recs[:6]):
+            rec_lines.append(f"{i+1}. **{rec['name']}** ({rec['platform'].upper()}) - {rec['badge']} [立即研究]({rec['url']})")
+        potential_summary = "\n".join(rec_lines)
+
     report_content = f"""# 🌐 Sitebuilder 全平台趋势简报
 > 生成时间: {ts_str}
 
-## 🎯 今日潜力建站推荐 (Top 3)
+## 🎯 今日潜力建站推荐 (Top 5)
+> 优先筛选：近 30 天新上线、搜索量突增、或正处于爆发期的新盘。
+
 {potential_summary}
 
 ---
@@ -263,7 +685,7 @@ def main():
 ## 🚨 实时趋势预警 & 新盘发现
 {trends_section}
 
-## 🎮 Roblox 实时热度 (Top 10)
+## 🎮 Roblox 实时热度 & 趋势
 {roblox_data}
 
 ## 🚂 Steam 市场动态 (Top Sellers)

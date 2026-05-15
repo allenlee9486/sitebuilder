@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "step": "1b",
+    "slug": "slime-rng",
+    "createdAt": "2026-05-15T08:15:00Z",
+    "status": "complete"
+  },
+  "media": {
+    "screenshots": [
+      {
+        "filename": "roblox-icon-512.png",
+        "description": "Official Roblox Game Icon (512x512)",
+        "type": "hero"
+      },
+      {
+        "filename": "crafting-recipes-table.jpg",
+        "description": "Table of all crafting recipes and ingredients",
+        "type": "guide",
+        "sourceUrl": "https://games.gg/es/roblox/guides/gu%C3%ADa-slime-rng-ubicaciones-de-recetas-de-artesan%C3%ADa/"
+      },
+      {
+        "filename": "mushroom-forest-recipe.jpg",
+        "description": "Hidden recipe location under the red mushroom in Mushroom Forest",
+        "type": "gameplay",
+        "sourceUrl": "https://m.kumparan.com/how-to-tekno/daftar-lokasi-resep-slime-rng-terbaru-dan-cara-meraciknya-di-mesin-crafting-27NQgx7S2OK"
+      }
+    ],
+    "videos": [
+      {
+        "videoId": "QSpFSFsFACc",
+        "platform": "youtube",
+        "title": "KreekCraft Plays Slime RNG",
+        "type": "gameplay"
+      },
+      {
+        "videoId": "hkXpX2ZVBWA",
+        "platform": "youtube",
+        "title": "Noob to Pro - Full Slime RNG Guide",
+        "type": "guide"
+      }
+    ]
+  },
+  "gaps": [
+    "Could not download some external thumbnails due to network restrictions, but URLs are recorded."
+  ]
+}

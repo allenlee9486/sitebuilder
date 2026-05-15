@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "step": 1,
+    "slug": "slime-rng",
+    "createdAt": "2026-05-15T08:30:00Z",
+    "status": "complete"
+  },
+  "identity": {
+    "gameName": "Slime RNG",
+    "platform": "roblox",
+    "developer": "Stouts Studio",
+    "releaseDate": "2026-01-01",
+    "genre": "Simulation / RNG / Incremental",
+    "placeId": "92416421522960",
+    "universeId": "9792947201",
+    "originalUrl": "https://www.roblox.com/games/92416421522960/Slime-RNG"
+  },
+  "sources": {
+    "trello": "https://trello.com/b/SlimeRNGOfficial",
+    "discord": "https://discord.com/invite/aKUe7ngpjd",
+    "reddit": "https://www.reddit.com/r/SlimeRNG/",
+    "youtube": [
+      {"videoId": "QSpFSFsFACc", "title": "KreekCraft Plays Slime RNG", "type": "gameplay"},
+      {"videoId": "hkXpX2ZVBWA", "title": "Noob to Pro - Full Slime RNG Guide", "type": "guide"}
+    ],
+    "wiki": "https://slime-rng.net/",
+    "twitter": "https://x.com/l_eiif",
+    "patchNotes": "https://discord.com/channels/15794692/announcements"
+  },
+  "media": {
+    "screenshots": [
+      {
+        "filename": "roblox-icon-512.png",
+        "description": "Official Roblox Game Icon (512x512)",
+        "type": "hero"
+      },
+      {
+        "filename": "crafting-recipes-table.jpg",
+        "description": "Table of all crafting recipes and ingredients",
+        "type": "guide",
+        "sourceUrl": "https://games.gg/es/roblox/guides/gu%C3%ADa-slime-rng-ubicaciones-de-recetas-de-artesan%C3%ADa/"
+      }
+    ],
+    "videos": [
+      {
+        "videoId": "QSpFSFsFACc",
+        "platform": "youtube",
+        "title": "KreekCraft Plays Slime RNG",
+        "type": "gameplay"
+      }
+    ]
+  },
+  "mechanics": {
+    "coreLoop": "玩家通过点击或自动挂机进行 RNG 抽奖（Roll）获取不同稀有度的 Slime，通过战斗获取金币解锁新区域，收集配方进行 Crafting 升级，最终通过 Rebirth（重生）获得永久倍率加成。",
+    "systems": [
+      {
+        "name": "Crafting System",
+        "description": "玩家需要在地图各处寻找隐藏的配方卷轴，并收集特定稀有度的 Slime 作为材料合成强力装备。",
+        "dataStructure": "枚举",
+        "toolOpportunity": "database",
+        "confidence": "high",
+        "reason": "配方位置隐蔽且材料要求复杂，数据库/图鉴对玩家寻找卷轴和准备材料非常有帮助。"
+      },
+      {
+        "name": "Luck/RNG System",
+        "description": "通过装备、药剂、服务器好友和重生倍率叠加最终抽奖概率。",
+        "dataStructure": "数值",
+        "toolOpportunity": "calculator",
+        "confidence": "high",
+        "reason": "倍率叠加计算复杂，玩家需要计算器来规划如何最高效地获得 rarest slimes。"
+      },
+      {
+        "name": "Zone Progression",
+        "description": "线性解锁的新区域，每个区域有不同的金币产出和敌人。",
+        "dataStructure": "进度",
+        "toolOpportunity": "planner",
+        "confidence": "medium",
+        "reason": "帮助玩家规划金币使用和重生时机。"
+      }
+    ]
+  },
+  "recommendation": {
+    "primaryTool": "database",
+    "secondaryTools": ["calculator", "planner"],
+    "avoidList": ["codes"],
+    "competitiveEdge": "大站通常只提供静态的代码列表和简单的‘如何获取’攻略。我们将提供完整的隐藏配方地图定位图鉴 + 实时材料计算器，这对于中后期深度玩家是刚需。"
+  },
+  "gaps": [
+    {"field": "media.screenshots", "reason": "由于网络限制未能下载全部 YouTube 缩略图，但已记录 URL", "priority": "low"}
+  ]
+}
