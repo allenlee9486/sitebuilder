@@ -1,0 +1,76 @@
+{
+  "meta": { "step": 4, "slug": "sinisistar-2", "createdAt": "2026-05-16T18:45:00Z", "status": "complete" },
+  "siteStructure": {
+    "homepage": { "url": "/", "primaryKeyword": "SiNiSistar 2 Walkthrough & Guide", "pageType": "homepage" },
+    "pages": [
+      {
+        "url": "/database", "keyword": "SiNiSistar 2 Database",
+        "pageType": "hub",
+        "parentHub": null,
+        "relatedLinks": ["/", "/bosses", "/relics"],
+        "priority": "P0",
+        "assets": {
+          "data": { "type": "aggregation", "fields": ["item_name", "category", "stats"], "sources": ["namu.wiki", "pixiv.net"], "status": "pending" },
+          "images": [{ "type": "hero", "filename": "database-hero.webp", "source": "Steam", "status": "pending" }],
+          "videos": [],
+          "references": [{ "type": "wiki", "url": "https://namu.wiki/w/SiNiSistar%202", "status": "pending" }]
+        }
+      },
+      {
+        "url": "/maps", "keyword": "SiNiSistar 2 Maps",
+        "pageType": "tool-map",
+        "parentHub": null,
+        "relatedLinks": ["/", "/database", "/bosses"],
+        "priority": "P0",
+        "assets": {
+          "data": { "type": "spatial", "fields": ["dungeon_name", "map_image", "markers"], "sources": ["akatsuki.xxxblog.jp"], "status": "pending" },
+          "images": [{ "type": "map", "filename": "world-map.webp", "source": "akatsuki", "status": "pending" }],
+          "videos": [{ "videoId": "5p62kJaf6ec", "title": "Map Exploration Reference", "status": "pending" }],
+          "references": [{ "type": "blog", "url": "https://akatsuki.xxxblog.jp/archives/7886293.html", "status": "pending" }]
+        }
+      },
+      {
+        "url": "/bosses", "keyword": "SiNiSistar 2 Boss Guide",
+        "pageType": "hub",
+        "parentHub": null,
+        "relatedLinks": ["/", "/database", "/maps"],
+        "priority": "P0",
+        "assets": {
+          "data": { "type": "boss_stats", "fields": ["boss_name", "weakness", "strategy"], "sources": ["doureview.com"], "status": "pending" },
+          "images": [{ "type": "thumbnail", "filename": "boss-thumbnails.webp", "source": "YouTube", "status": "pending" }],
+          "videos": [{ "videoId": "hC-a9IcCS2M", "title": "Boss Combat Showcase", "status": "pending" }],
+          "references": [{ "type": "blog", "url": "https://www.doureview.com/blog-entry-543.html", "status": "pending" }]
+        }
+      },
+      {
+        "url": "/relics", "keyword": "SiNiSistar 2 Relics Locations",
+        "pageType": "tool-database",
+        "parentHub": "/database",
+        "relatedLinks": ["/database", "/", "/maps"],
+        "priority": "P1",
+        "assets": {
+          "data": { "type": "item_list", "fields": ["relic_name", "location", "effect"], "sources": ["namu.wiki"], "status": "pending" },
+          "images": [{ "type": "screenshot", "filename": "relic-location-example.webp", "source": "Gameplay", "status": "pending" }],
+          "videos": [],
+          "references": [{ "type": "wiki", "url": "https://ja.namu.wiki/w/SiNiSistar%202", "status": "pending" }]
+        }
+      }
+    ]
+  },
+  "buildOrder": {
+    "batch1_hubs": ["/database", "/bosses"],
+    "batch2_tools": ["/maps", "/relics"],
+    "batch3_clusters": ["/guides/magic-system"],
+    "batch4_guides": ["/guides/endings"]
+  },
+  "internalLinking": {
+    "strategy": "cluster → hub → homepage",
+    "rules": ["每个 cluster 页 Related Links 第一位是父 hub", "首页链接所有 hub"]
+  },
+  "techStack": {
+    "framework": "Next.js", "styling": "Tailwind CSS",
+    "components": "shadcn/ui", "hosting": "Cloudflare Pages"
+  },
+  "totalPages": 7,
+  "estimatedBuildTime": "4-6 hours"
+}

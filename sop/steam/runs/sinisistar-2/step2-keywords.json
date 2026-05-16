@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "step": 2,
+    "slug": "sinisistar-2",
+    "createdAt": "2026-05-16T18:05:00Z",
+    "status": "complete",
+    "totalCandidates": 20,
+    "finalKeywords": 10
+  },
+  "seedKeywords": ["SiNiSistar 2", "walkthrough", "map", "boss guide", "relics"],
+  "competitors": ["doureview.com", "nikkiko-games.online", "akatsuki.xxxblog.jp"],
+  "expandedKeywords": [
+    "SiNiSistar 2 walkthrough",
+    "SiNiSistar 2 map",
+    "SiNiSistar 2 boss guide",
+    "SiNiSistar 2 all items",
+    "SiNiSistar 2 relics locations",
+    "SiNiSistar 2 endings guide",
+    "SiNiSistar 2 magic spells list",
+    "SiNiSistar 2 mods",
+    "SiNiSistar 2 save file location",
+    "SiNiSistar 2 characters"
+  ],
+  "evaluation": [
+    {
+      "keyword": "SiNiSistar 2 walkthrough",
+      "trendsAvg": 85,
+      "trendDirection": "up",
+      "allintitle": 500,
+      "serpDifficulty": "easy",
+      "intent": "info",
+      "tier": "A",
+      "note": "Primary traffic driver during release window."
+    },
+    {
+      "keyword": "SiNiSistar 2 map",
+      "trendsAvg": 60,
+      "trendDirection": "up",
+      "allintitle": 200,
+      "serpDifficulty": "easy",
+      "intent": "tool",
+      "tier": "A",
+      "note": "Crucial for navigating complex 2D dungeons."
+    },
+    {
+      "keyword": "SiNiSistar 2 boss guide",
+      "trendsAvg": 50,
+      "trendDirection": "up",
+      "allintitle": 150,
+      "serpDifficulty": "easy",
+      "intent": "info",
+      "tier": "A",
+      "note": "Challenging boss fights drive high search volume."
+    },
+    {
+      "keyword": "SiNiSistar 2 relics locations",
+      "trendsAvg": 40,
+      "trendDirection": "up",
+      "allintitle": 100,
+      "serpDifficulty": "easy",
+      "intent": "database",
+      "tier": "A",
+      "note": "Main collection element for power progression."
+    },
+    {
+      "keyword": "SiNiSistar 2 mods",
+      "trendsAvg": 30,
+      "trendDirection": "up",
+      "allintitle": 300,
+      "serpDifficulty": "medium",
+      "intent": "transaction",
+      "tier": "B",
+      "note": "High demand for uncensored/custom content."
+    }
+  ],
+  "finalPlan": {
+    "primaryKeyword": "SiNiSistar 2 walkthrough & Guide",
+    "tierA": [
+      "SiNiSistar 2 walkthrough",
+      "SiNiSistar 2 map",
+      "SiNiSistar 2 boss guide",
+      "SiNiSistar 2 relics locations"
+    ],
+    "tierB": [
+      "SiNiSistar 2 all endings guide",
+      "SiNiSistar 2 magic spells list",
+      "SiNiSistar 2 mods"
+    ],
+    "tierC": [
+      "SiNiSistar 2 review",
+      "SiNiSistar 2 system requirements"
+    ]
+  }
+}

@@ -3,7 +3,9 @@ import os
 
 def setup_task():
     task_name = "SitebuilderMonitorTask"
-    bat_path = r"D:\开发设计工具\sitebuilder\monitors\run_monitor.bat"
+    # 获取当前脚本所在目录的绝对路径，并定位到 .bat 文件
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    bat_path = os.path.join(current_dir, "run_monitor.bat")
     
     # Delete task if it exists
     subprocess.run(["schtasks", "/delete", "/tn", task_name, "/f"], capture_output=True)

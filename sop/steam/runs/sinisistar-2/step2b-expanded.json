@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "step": "2b",
+    "slug": "sinisistar-2",
+    "createdAt": "2026-05-16T17:55:00Z"
+  },
+  "competitorAnalysis": [
+    {
+      "domain": "doureview.com",
+      "monthlyVisits": 50000,
+      "organicPercent": 85,
+      "topKeywords": ["SiNiSistar 2 攻略", "SiNiSistar 2 walkthrough", "SiNiSistar 2 boss"]
+    },
+    {
+      "domain": "akatsuki.xxxblog.jp",
+      "monthlyVisits": 30000,
+      "organicPercent": 90,
+      "topKeywords": ["SiNiSistar 2 マップ", "SiNiSistar 2 map", "SiNiSistar 2 quest"]
+    }
+  ],
+  "expandedKeywords": [
+    {
+      "keyword": "SiNiSistar 2 walkthrough",
+      "source": "suggest",
+      "intent": "info",
+      "priority": "high",
+      "trendsNote": "Release peak"
+    },
+    {
+      "keyword": "SiNiSistar 2 map and locations",
+      "source": "competitor",
+      "intent": "tool",
+      "priority": "high",
+      "trendsNote": "High demand for navigation"
+    },
+    {
+      "keyword": "SiNiSistar 2 uncensored mod",
+      "source": "suggest",
+      "intent": "transaction",
+      "priority": "high",
+      "trendsNote": "Breakout"
+    },
+    {
+      "keyword": "SiNiSistar 2 all bosses guide",
+      "source": "youtube",
+      "intent": "info",
+      "priority": "high",
+      "trendsNote": "Rising"
+    },
+    {
+      "keyword": "SiNiSistar 2 how to get magic",
+      "source": "competitor",
+      "intent": "info",
+      "priority": "medium",
+      "trendsNote": "Niche"
+    },
+    {
+      "keyword": "SiNiSistar 2 save file location",
+      "source": "suggest",
+      "intent": "navigation",
+      "priority": "medium",
+      "trendsNote": "Utility"
+    },
+    {
+      "keyword": "SiNiSistar 2 controls guide",
+      "source": "suggest",
+      "intent": "info",
+      "priority": "medium",
+      "trendsNote": "Utility"
+    }
+  ],
+  "breakoutKeywords": [
+    "SiNiSistar 2 walkthrough",
+    "SiNiSistar 2 uncensored mod"
+  ]
+}

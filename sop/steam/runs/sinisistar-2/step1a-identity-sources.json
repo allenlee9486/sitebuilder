@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "gameName": "SiNiSistar 2",
+    "slug": "sinisistar-2",
+    "platform": "Steam",
+    "steamId": "4466620",
+    "developer": "Uu",
+    "publisher": "Eroge Japan",
+    "genre": ["Action", "Adventure", "Indie", "RPG"],
+    "releaseDate": "2026-05-15",
+    "description": "A dark action RPG with pixel art style where a nun fights cursed monsters in a decadent world."
+  },
+  "sources": {
+    "official": [
+      "https://store.steampowered.com/app/4466620/SiNiSistar_2/"
+    ],
+    "youtube": [
+      "https://m.youtube.com/watch?v=5p62kJaf6ec",
+      "https://m.youtube.com/watch?v=hC-a9IcCS2M",
+      "https://m.youtube.com/playlist?list=PL18dnvxmQw5Zv1AFDRDMzh6BDMxjL8UXB"
+    ],
+    "wiki": [
+      "https://namu.wiki/w/SiNiSistar%202",
+      "https://dic.pixiv.net/a/SiNiSistar2"
+    ],
+    "reddit": "https://www.reddit.com/search/?q=SiNiSistar+2",
+    "discord": "http://eroge-japan.com/",
+    "trello": null
+  }
+}

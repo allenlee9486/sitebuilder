@@ -1,0 +1,61 @@
+{
+  "meta": { "step": "4a", "slug": "sinisistar-2", "createdAt": "2026-05-16T18:35:00Z" },
+  "siteStructure": {
+    "homepage": { "url": "/", "primaryKeyword": "SiNiSistar 2 Walkthrough & Guide", "pageType": "homepage" },
+    "pages": [
+      {
+        "url": "/database", "keyword": "SiNiSistar 2 Database",
+        "pageType": "hub",
+        "parentHub": null,
+        "relatedLinks": ["/", "/bosses", "/relics"],
+        "priority": "P0"
+      },
+      {
+        "url": "/maps", "keyword": "SiNiSistar 2 Maps",
+        "pageType": "tool-map",
+        "parentHub": null,
+        "relatedLinks": ["/", "/database", "/bosses"],
+        "priority": "P0"
+      },
+      {
+        "url": "/bosses", "keyword": "SiNiSistar 2 Boss Guide",
+        "pageType": "hub",
+        "parentHub": null,
+        "relatedLinks": ["/", "/database", "/maps"],
+        "priority": "P0"
+      },
+      {
+        "url": "/relics", "keyword": "SiNiSistar 2 Relics Locations",
+        "pageType": "tool-database",
+        "parentHub": "/database",
+        "relatedLinks": ["/database", "/", "/maps"],
+        "priority": "P1"
+      },
+      {
+        "url": "/guides/magic-system", "keyword": "SiNiSistar 2 Magic System & Controls",
+        "pageType": "guide",
+        "parentHub": null,
+        "relatedLinks": ["/", "/database", "/relics"],
+        "priority": "P1"
+      },
+      {
+        "url": "/guides/endings", "keyword": "SiNiSistar 2 All Endings Walkthrough",
+        "pageType": "guide",
+        "parentHub": null,
+        "relatedLinks": ["/", "/bosses", "/database"],
+        "priority": "P2"
+      }
+    ]
+  },
+  "buildOrder": {
+    "batch1_hubs": ["/database", "/bosses"],
+    "batch2_tools": ["/maps", "/relics"],
+    "batch3_clusters": ["/guides/magic-system"],
+    "batch4_guides": ["/guides/endings"]
+  },
+  "internalLinking": {
+    "strategy": "cluster → hub → homepage",
+    "rules": ["每个 cluster 页 Related Links 第一位是父 hub", "首页链接所有 hub"]
+  },
+  "totalPages": 7
+}

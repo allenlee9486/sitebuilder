@@ -1,0 +1,36 @@
+{
+  "source": "https://think-game.com/archives/53748281.html",
+  "lastVerified": "2026-05-16",
+  "bosses": [
+    {
+      "name": "Swamp Child (沼の忌み子)",
+      "location": "Blood-Drinking Swamp",
+      "weakness": "Fire/Explosive",
+      "strategy": "Avoid swamp water to prevent sinking. Use ranged attacks to keep distance from its leech-like projectiles."
+    },
+    {
+      "name": "Demi-human Child (亜人の忌み子)",
+      "location": "Demi-human Base",
+      "weakness": "Magic",
+      "strategy": "Fast movements. Watch for the 'Impregnation' status attack. Use Sword Magic for high burst damage when it pauses."
+    },
+    {
+      "name": "Mock Spawn (模造の落とし子)",
+      "location": "Northeast Village",
+      "weakness": "Physical",
+      "strategy": "High defense. Use Explosive Arrows to break its posture before attacking."
+    },
+    {
+      "name": "Stomach Child (胃の忌み子)",
+      "location": "Body Cave",
+      "weakness": "Magic",
+      "strategy": "Complex environment with tentacles. Use Owl Magic to stay airborne and avoid floor hazards."
+    },
+    {
+      "name": "The Outer One (外なる者)",
+      "location": "Cathedral Top",
+      "weakness": "Scivias Powder",
+      "strategy": "Must use Scivias Powder to see the true form. Manage MP carefully as it has high HP and multiple phases."
+    }
+  ]
+}

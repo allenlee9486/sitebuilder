@@ -1,0 +1,78 @@
+{
+  "source": "https://think-game.com/archives/53748281.html",
+  "lastVerified": "2026-05-16",
+  "items": [
+    {
+      "name": "Arrow Magic",
+      "category": "Magic",
+      "location": "Initial",
+      "effect": "Standard ranged attack."
+    },
+    {
+      "name": "Sword Magic",
+      "category": "Magic",
+      "location": "Initial",
+      "effect": "Standard melee magic attack."
+    },
+    {
+      "name": "Piercing Arrow Magic",
+      "category": "Magic",
+      "location": "Blood-Drinking Swamp",
+      "effect": "Arrows penetrate enemies."
+    },
+    {
+      "name": "Explosive Arrow Magic",
+      "category": "Magic",
+      "location": "Northeast Village (Before Boss)",
+      "effect": "Arrows can be detonated with Sword Magic. Breaks defenses and meat blocks."
+    },
+    {
+      "name": "Owl Magic",
+      "category": "Magic",
+      "location": "Demi-human Base (SE dead end)",
+      "effect": "Hold jump button to hover in the air."
+    },
+    {
+      "name": "Yew Staff",
+      "category": "Weapon",
+      "location": "Initial",
+      "effect": "Standard staff."
+    },
+    {
+      "name": "Staff of Suffering",
+      "category": "Weapon",
+      "location": "South Road Swamp",
+      "effect": "Disables level-up effects while equipped."
+    },
+    {
+      "name": "Aspen Staff",
+      "category": "Weapon",
+      "location": "Demi-human Base",
+      "effect": "Magic Attack +2."
+    },
+    {
+      "name": "Exorcism Staff Sword",
+      "category": "Weapon",
+      "location": "Alsezon Town (Shop)",
+      "effect": "Magic Attack +3, Physical Attack +1."
+    },
+    {
+      "name": "Tranquebal",
+      "category": "Weapon",
+      "location": "West Road (Use Scivias Powder between pillars)",
+      "effect": "Magic Attack +5, Physical Attack +1, MP Consumption -3."
+    },
+    {
+      "name": "Staurotheka",
+      "category": "Relic",
+      "location": "Cathedral Archive (Fall from lift)",
+      "effect": "Increases Relics obtained while held."
+    },
+    {
+      "name": "Scivias Powder",
+      "category": "Key Item",
+      "location": "Crafted (Archive materials)",
+      "effect": "Allows player to see invisible higher entities (Final Boss, Seere, etc.)."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "step": 1,
+    "slug": "sinisistar-2",
+    "createdAt": "2026-05-16T17:45:00Z",
+    "status": "complete"
+  },
+  "identity": {
+    "gameName": "SiNiSistar 2",
+    "slug": "sinisistar-2",
+    "platform": "Steam",
+    "steamId": "4466620",
+    "developer": "Uu",
+    "publisher": "Eroge Japan",
+    "genre": ["Action", "Adventure", "Indie", "RPG"],
+    "releaseDate": "2026-05-15",
+    "description": "A dark action RPG with pixel art style where a nun fights cursed monsters in a decadent world."
+  },
+  "sources": {
+    "official": [
+      "https://store.steampowered.com/app/4466620/SiNiSistar_2/"
+    ],
+    "youtube": [
+      "https://m.youtube.com/watch?v=5p62kJaf6ec",
+      "https://m.youtube.com/watch?v=hC-a9IcCS2M",
+      "https://m.youtube.com/playlist?list=PL18dnvxmQw5Zv1AFDRDMzh6BDMxjL8UXB"
+    ],
+    "wiki": [
+      "https://namu.wiki/w/SiNiSistar%202",
+      "https://dic.pixiv.net/a/SiNiSistar2"
+    ],
+    "reddit": "https://www.reddit.com/search/?q=SiNiSistar+2",
+    "discord": "http://eroge-japan.com/",
+    "trello": null
+  },
+  "media": {
+    "screenshots": [
+      {
+        "filename": "hero-overview.jpg",
+        "source": "Steam Header",
+        "url": "https://cdn.akamai.steamstatic.com/steam/apps/4466620/header.jpg",
+        "description": "Main key art showing the protagonist Sister Lelia."
+      },
+      {
+        "filename": "gameplay-combat.jpg",
+        "source": "YouTube",
+        "url": "https://img.youtube.com/vi/5p62kJaf6ec/maxresdefault.jpg",
+        "description": "Sister Lelia in a dark dungeon environment, demonstrating the pixel art combat."
+      },
+      {
+        "filename": "gameplay-ui.jpg",
+        "source": "YouTube",
+        "url": "https://img.youtube.com/vi/hC-a9IcCS2M/maxresdefault.jpg",
+        "description": "Gameplay UI showing health, magic, and inventory."
+      }
+    ],
+    "videos": [
+      {
+        "videoId": "5p62kJaf6ec",
+        "title": "SiNiSistar 2 Full Game No Commentary",
+        "duration": "02:30:31",
+        "useFor": "reference"
+      },
+      {
+        "videoId": "hC-a9IcCS2M",
+        "title": "SiNiSistar 2 Demo 1.7.0 Gameplay",
+        "duration": "06:07",
+        "useFor": "embed"
+      }
+    ],
+    "thumbnail": "https://cdn.akamai.steamstatic.com/steam/apps/4466620/capsule_616x353.jpg"
+  },
+  "mechanics": {
+    "coreLoop": "Combat, exploration of 6 decadent dungeons, leveling up, and collecting Relics to enhance stats.",
+    "systems": [
+      {
+        "name": "Combat & Magic",
+        "description": "Melee attacks and magic (Arrow/Sword magic) using MP. Includes headshot mechanics.",
+        "dataStructure": "Numerical|Status",
+        "toolOpportunity": "calculator",
+        "confidence": "high",
+        "reason": "MP management and damage optimization are key for surviving difficult bosses."
+      },
+      {
+        "name": "Enemy & Item Database",
+        "description": "6 dungeons filled with unique monsters and hidden items/Relics.",
+        "dataStructure": "Enumeration",
+        "toolOpportunity": "database",
+        "confidence": "high",
+        "reason": "Players need a checklist for items and info on enemy patterns/drops."
+      },
+      {
+        "name": "Impurity & Status Effects",
+        "description": "A complex system of status effects (impurity, pregnancy, etc.) that affect gameplay.",
+        "dataStructure": "Status",
+        "toolOpportunity": "tracker",
+        "confidence": "medium",
+        "reason": "Visualizing status effects and their impacts could be useful for advanced players."
+      }
+    ]
+  },
+  "recommendation": {
+    "primaryTool": "database",
+    "secondaryTools": ["calculator", "map"],
+    "avoidList": ["codes"],
+    "competitiveEdge": "Detailed interactive database for items and enemy weaknesses with high-quality pixel art previews."
+  },
+  "gaps": [
+    {
+      "field": "sources.trello",
+      "reason": "No public Trello board found for this Steam indie game.",
+      "priority": "low"
+    }
+  ]
+}

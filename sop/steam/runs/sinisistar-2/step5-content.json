@@ -1,0 +1,24 @@
+{
+  "meta": { "step": 5, "slug": "sinisistar-2", "createdAt": "2026-05-16T19:00:00Z", "status": "complete" },
+  "dataFiles": [
+    "step5-content/data/sinisistar-2-database.json",
+    "step5-content/data/sinisistar-2-bosses.json",
+    "step5-content/data/sinisistar-2-map.json"
+  ],
+  "mediaManifest": {
+    "images": [
+      { "id": "header", "url": "https://cdn.akamai.steamstatic.com/steam/apps/4466620/header.jpg", "type": "hero" },
+      { "id": "capsule", "url": "https://cdn.akamai.steamstatic.com/steam/apps/4466620/capsule_616x353.jpg", "type": "thumbnail" }
+    ],
+    "videos": [
+      { "id": "full-walkthrough", "videoId": "5p62kJaf6ec", "title": "SiNiSistar 2 Full Game" },
+      { "id": "boss-combat", "videoId": "hC-a9IcCS2M", "title": "SiNiSistar 2 Boss Combat" }
+    ]
+  },
+  "contentStatus": {
+    "database": "Ready",
+    "bosses": "Ready",
+    "maps": "Ready",
+    "guides": "Pending drafting (Step 6)"
+  }
+}

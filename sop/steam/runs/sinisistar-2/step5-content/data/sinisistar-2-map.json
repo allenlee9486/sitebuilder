@@ -1,0 +1,40 @@
+{
+  "source": "https://akatsuki.xxxblog.jp/archives/7886293.html",
+  "lastVerified": "2026-05-16",
+  "dungeons": [
+    {
+      "name": "Alsezon Town",
+      "type": "Hub",
+      "features": ["Monastery (Save/Respec)", "Shop", "Tavern"]
+    },
+    {
+      "name": "Blood-Drinking Swamp",
+      "type": "Dungeon",
+      "hazards": ["Deep Mud", "Leeches"],
+      "key_items": ["Piercing Arrow", "Medical Leech"]
+    },
+    {
+      "name": "Demi-human Base",
+      "type": "Dungeon",
+      "hazards": ["Prison Traps", "Ambush"],
+      "key_items": ["Aspen Staff", "Owl Magic"]
+    },
+    {
+      "name": "Northeast Village",
+      "type": "Dungeon",
+      "hazards": ["Parasites", "Mutants"],
+      "key_items": ["Explosive Arrow", "Cathedral Key"]
+    },
+    {
+      "name": "Body Cave",
+      "type": "Dungeon",
+      "hazards": ["Acid", "Tentacles"],
+      "key_items": ["Relics Increase Item"]
+    },
+    {
+      "name": "Alsezon Cathedral",
+      "type": "Final Dungeon",
+      "features": ["Library", "Archive", "Top Floor"]
+    }
+  ]
+}

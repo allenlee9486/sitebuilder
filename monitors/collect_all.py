@@ -6,6 +6,7 @@
 
 import subprocess
 import sys
+import os
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -30,11 +31,16 @@ def main():
         print(f"\n🚀 正在运行: {script.parent.parent.name} 采集...")
         try:
             # 运行脚本并捕获输出
+            env = os.environ.copy()
+            env["PYTHONUTF8"] = "1"
+            env["PYTHONIOENCODING"] = "utf-8"
+            
             result = subprocess.run(
                 [sys.executable, str(script)],
                 capture_output=True,
                 text=True,
-                cwd=str(MONITORS_DIR.parent)
+                cwd=str(MONITORS_DIR.parent),
+                env=env
             )
             print(result.stdout)
             if result.stderr:

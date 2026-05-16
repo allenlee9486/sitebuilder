@@ -1,0 +1,39 @@
+{
+  "media": {
+    "screenshots": [
+      {
+        "filename": "hero-overview.jpg",
+        "source": "Steam Header",
+        "url": "https://cdn.akamai.steamstatic.com/steam/apps/4466620/header.jpg",
+        "description": "Main key art showing the protagonist Sister Lelia."
+      },
+      {
+        "filename": "gameplay-combat.jpg",
+        "source": "YouTube",
+        "url": "https://img.youtube.com/vi/5p62kJaf6ec/maxresdefault.jpg",
+        "description": "Sister Lelia in a dark dungeon environment, demonstrating the pixel art combat."
+      },
+      {
+        "filename": "gameplay-ui.jpg",
+        "source": "YouTube",
+        "url": "https://img.youtube.com/vi/hC-a9IcCS2M/maxresdefault.jpg",
+        "description": "Gameplay UI showing health, magic, and inventory."
+      }
+    ],
+    "videos": [
+      {
+        "videoId": "5p62kJaf6ec",
+        "title": "SiNiSistar 2 Full Game No Commentary",
+        "duration": "02:30:31",
+        "useFor": "reference"
+      },
+      {
+        "videoId": "hC-a9IcCS2M",
+        "title": "SiNiSistar 2 Demo 1.7.0 Gameplay",
+        "duration": "06:07",
+        "useFor": "embed"
+      }
+    ],
+    "thumbnail": "https://cdn.akamai.steamstatic.com/steam/apps/4466620/capsule_616x353.jpg"
+  }
+}

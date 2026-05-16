@@ -1,0 +1,40 @@
+{
+  "seeds": {
+    "brand": ["SiNiSistar 2"],
+    "mechanics": ["combat", "magic", "relics", "impurity", "enemies", "items", "dungeons", "bosses"],
+    "toolIntent": ["database", "calculator", "wiki", "guide", "map", "walkthrough"]
+  },
+  "candidates": [
+    {"keyword": "SiNiSistar 2 walkthrough", "formula": "brand + walkthrough", "priority": "high"},
+    {"keyword": "SiNiSistar 2 map", "formula": "brand + map", "priority": "high"},
+    {"keyword": "SiNiSistar 2 boss guide", "formula": "brand + boss guide", "priority": "high"},
+    {"keyword": "SiNiSistar 2 all items", "formula": "brand + all items", "priority": "high"},
+    {"keyword": "SiNiSistar 2 relics locations", "formula": "brand + relics locations", "priority": "high"},
+    {"keyword": "SiNiSistar 2 endings guide", "formula": "brand + endings guide", "priority": "high"},
+    {"keyword": "SiNiSistar 2 magic spells list", "formula": "brand + magic spells list", "priority": "high"},
+    {"keyword": "SiNiSistar 2 quest list", "formula": "brand + quest list", "priority": "medium"},
+    {"keyword": "SiNiSistar 2 characters", "formula": "brand + characters", "priority": "medium"},
+    {"keyword": "SiNiSistar 2 tips for beginners", "formula": "brand + tips", "priority": "medium"},
+    {"keyword": "SiNiSistar 2 mods", "formula": "brand + mods", "priority": "medium"},
+    {"keyword": "SiNiSistar 2 system requirements", "formula": "brand + system requirements", "priority": "low"},
+    {"keyword": "SiNiSistar 2 review", "formula": "brand + review", "priority": "low"}
+  ],
+  "serp": [
+    {
+      "keyword": "SiNiSistar 2 walkthrough",
+      "results": [
+        {"domain": "doureview.com", "type": "article", "quality": "high", "lang": "ja"},
+        {"domain": "nikkiko-games.online", "type": "article", "quality": "high", "lang": "ja"},
+        {"domain": "namu.wiki", "type": "wiki", "quality": "medium", "lang": "ko"}
+      ],
+      "gap": "No high-quality English walkthrough available in Top 5."
+    },
+    {
+      "keyword": "SiNiSistar 2 map",
+      "results": [
+        {"domain": "akatsuki.xxxblog.jp", "type": "article", "quality": "high", "lang": "ja"}
+      ],
+      "gap": "Interactive map is missing; only static Japanese images exist."
+    }
+  ]
+}

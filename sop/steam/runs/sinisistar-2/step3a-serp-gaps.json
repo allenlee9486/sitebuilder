@@ -1,0 +1,58 @@
+{
+  "meta": { "step": "3a", "slug": "sinisistar-2", "createdAt": "2026-05-16T18:15:00Z" },
+  "serpAnalysis": [
+    {
+      "keyword": "SiNiSistar 2 walkthrough",
+      "tier": "A",
+      "serpFeatures": {
+        "featuredSnippet": null,
+        "peopleAlsoAsk": ["How many endings are in SiNiSistar 2?", "How to beat the Flaying Priest?"],
+        "videoCarousel": true,
+        "knowledgePanel": false
+      },
+      "results": [
+        {
+          "rank": 1, "url": "https://www.doureview.com/blog-entry-543.html", "domain": "doureview.com",
+          "siteType": "老小站",
+          "contentType": "静态文章",
+          "quality": "high",
+          "hasInteractive": false,
+          "gaps": ["Language: Japanese", "No interactive checklists"]
+        },
+        {
+          "rank": 2, "url": "https://nikkiko-games.online/sinisistar2-guide-clear-mod-settings/", "domain": "nikkiko-games.online",
+          "siteType": "老小站",
+          "contentType": "静态文章",
+          "quality": "high",
+          "hasInteractive": false,
+          "gaps": ["Language: Japanese", "Mainly focuses on mods"]
+        }
+      ],
+      "gapSummary": {
+        "ourAdvantage": "First high-quality English guide with interactive item checklists and boss weakness database.",
+        "difficultyRating": "easy",
+        "recommendation": "go"
+      }
+    },
+    {
+      "keyword": "SiNiSistar 2 map",
+      "tier": "A",
+      "serpFeatures": { "featuredSnippet": null, "peopleAlsoAsk": [], "videoCarousel": false, "knowledgePanel": false },
+      "results": [
+        {
+          "rank": 1, "url": "https://akatsuki.xxxblog.jp/archives/7886293.html", "domain": "akatsuki.xxxblog.jp",
+          "siteType": "老小站",
+          "contentType": "静态文章",
+          "quality": "medium",
+          "hasInteractive": false,
+          "gaps": ["Static images only", "Language: Japanese"]
+        }
+      ],
+      "gapSummary": {
+        "ourAdvantage": "Interactive web-based map for 6 main dungeons.",
+        "difficultyRating": "easy",
+        "recommendation": "go"
+      }
+    }
+  ]
+}
