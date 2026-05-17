@@ -526,36 +526,36 @@ def analyze_crazygames():
         enrich_general_metadata(conn, "crazygames")
         
         latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
-        # 优先显示新盘
+        # 获取最近 7 天内监控新发现或新上线的游戏
         q = """
-        SELECT s.name, s.slug, s.category, f.created_at
+        SELECT s.name, s.slug, s.category, f.created_at, f.first_date
         FROM snapshots s
         JOIN first_seen f ON s.game_id = f.game_id
         WHERE s.timestamp = ?
-        ORDER BY (f.created_at IS NOT NULL AND f.created_at > date('now', '-30 days')) DESC, s.name ASC
+        AND (
+            (f.created_at IS NOT NULL AND f.created_at >= date('now', '-7 days'))
+            OR (f.first_date IS NOT NULL AND f.first_date >= date('now', '-7 days'))
+        )
+        ORDER BY COALESCE(f.created_at, f.first_date) DESC, s.name ASC
         LIMIT 15
         """
         rows = conn.execute(q, (latest_ts,)).fetchall()
         conn.close()
         
+        if not rows:
+            return "✨ 暂无 7 天内上线的新游数据。"
+            
         lines = []
         now = datetime.now(timezone.utc).date()
         
-        for name, slug, cat, created_at in rows:
-            is_new = False
-            age_str = ""
-            if created_at:
-                try:
-                    dt = datetime.strptime(created_at, "%Y-%m-%d").date()
-                    age = (now - dt).days
-                    if age <= 45: 
-                        is_new = True
-                        age_str = f" (🆕 {age}d)"
-                except: pass
-                
+        for name, slug, cat, created_at, first_date in rows:
+            # 优先使用 release_date (created_at)，如果没有则使用发现日期
+            date_str = created_at or first_date
+            dt = datetime.strptime(date_str, "%Y-%m-%d").date()
+            age = (now - dt).days
             link = f"https://www.crazygames.com/game/{slug}"
-            tag = " [NEW]" if is_new else ""
-            lines.append(f"- **[{name}]({link})** *[{cat}]*{age_str}{tag}")
+            label = "NEW" if created_at else "DISCOVERED"
+            lines.append(f"- **[{name}]({link})** *[{cat}]* (🆕 {age}d) [{label}]")
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -569,35 +569,34 @@ def analyze_itch():
         enrich_general_metadata(conn, "itch")
         
         latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
-        # 优先显示新盘
+        # 获取最近 7 天内监控新发现或新上线的游戏
         q = """
-        SELECT s.name, s.link, s.author, f.created_at
+        SELECT s.name, s.link, s.author, f.created_at, f.first_date
         FROM snapshots s
         JOIN first_seen f ON s.game_id = f.game_id
         WHERE s.timestamp = ?
-        ORDER BY (f.created_at IS NOT NULL AND f.created_at > date('now', '-30 days')) DESC, s.name ASC
+        AND (
+            (f.created_at IS NOT NULL AND f.created_at >= date('now', '-7 days'))
+            OR (f.first_date IS NOT NULL AND f.first_date >= date('now', '-7 days'))
+        )
+        ORDER BY COALESCE(f.created_at, f.first_date) DESC, s.name ASC
         LIMIT 15
         """
         rows = conn.execute(q, (latest_ts,)).fetchall()
         conn.close()
         
+        if not rows:
+            return "✨ 暂无 7 天内上线的新游数据。"
+            
         lines = []
         now = datetime.now(timezone.utc).date()
         
-        for name, link, author, created_at in rows:
-            is_new = False
-            age_str = ""
-            if created_at:
-                try:
-                    dt = datetime.strptime(created_at, "%Y-%m-%d").date()
-                    age = (now - dt).days
-                    if age <= 45: 
-                        is_new = True
-                        age_str = f" (🆕 {age}d)"
-                except: pass
-                
-            tag = " [NEW]" if is_new else ""
-            lines.append(f"- **[{name}]({link})** *by {author}*{age_str}{tag}")
+        for name, link, author, created_at, first_date in rows:
+            date_str = created_at or first_date
+            dt = datetime.strptime(date_str, "%Y-%m-%d").date()
+            age = (now - dt).days
+            label = "NEW" if created_at else "DISCOVERED"
+            lines.append(f"- **[{name}]({link})** *by {author}* (🆕 {age}d) [{label}]")
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -650,6 +649,33 @@ def main():
                     })
             except: pass
         steam_conn.close()
+
+    # 2.4 CrazyGames & itch.io 潜力新盘
+    for platform in ["crazygames", "itch"]:
+        conn = get_db_connection(platform)
+        if conn:
+            now_date = datetime.now(timezone.utc).date()
+            q = """
+            SELECT name, game_id, created_at, first_date 
+            FROM first_seen 
+            WHERE (created_at IS NOT NULL AND created_at >= date('now', '-7 days'))
+            OR (first_date IS NOT NULL AND first_date >= date('now', '-7 days'))
+            ORDER BY COALESCE(created_at, first_date) DESC
+            """
+            for name, gid, created_at, first_date in conn.execute(q).fetchall():
+                try:
+                    date_str = created_at or first_date
+                    dt = datetime.strptime(date_str, "%Y-%m-%d").date()
+                    age = (now_date - dt).days
+                    url = gid if gid.startswith("http") else (f"https://www.crazygames.com/game/{gid}" if platform == "crazygames" else gid)
+                    candidates.append({
+                        "name": name,
+                        "url": url,
+                        "platform": platform,
+                        "age": age
+                    })
+                except: pass
+            conn.close()
 
     # 去重候选名单 (根据 URL)
     seen_urls = set()
