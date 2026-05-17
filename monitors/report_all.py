@@ -478,47 +478,41 @@ STEAM_GIANT_BLACKLIST = [
 ]
 
 def analyze_steam():
-    conn = get_db_connection("steam")
-    if not conn: return "❌ 数据库未找到"
-    
+    """分析 Steam 数据库中的最新趋势"""
     try:
+        conn = get_db_connection("steam")
+        if not conn: return "⚠️ Steam 数据库连接失败"
+        
         # 补全元数据
         enrich_steam_metadata(conn)
         
+        # 获取最新的快照时间
         latest_ts = conn.execute("SELECT MAX(timestamp) FROM snapshots").fetchone()[0]
+        
+        # 仅获取最近 7 天内新发现的游戏
         q = """
-        SELECT s.game_id, s.name, f.created_at, f.first_date
+        SELECT s.game_id, s.name, f.created_at
         FROM snapshots s
         JOIN first_seen f ON s.game_id = f.game_id
-        WHERE s.timestamp = ?
-        ORDER BY s.players DESC
-        LIMIT 30
+        WHERE s.timestamp = ? 
+        AND f.created_at >= date('now', '-7 days')
+        ORDER BY f.created_at DESC, s.name ASC
+        LIMIT 15
         """
         rows = conn.execute(q, (latest_ts,)).fetchall()
         conn.close()
         
+        if not rows:
+            return "✨ 暂无 7 天内上线的新游数据。"
+            
         lines = []
         now = datetime.now(timezone.utc).date()
         
-        for gid, name, created_at, first_date in rows:
-            if gid in STEAM_GIANT_BLACKLIST:
-                continue
-                
-            is_new = False
-            age_str = ""
-            if created_at:
-                try:
-                    dt = datetime.strptime(created_at, "%Y-%m-%d").date()
-                    age = (now - dt).days
-                    if age <= 45: # Steam 稍微放宽一点，因为 API 同步有时差
-                        is_new = True
-                        age_str = f" (🆕 {age}d)"
-                except: pass
-            
+        for gid, name, created_at in rows:
+            dt = datetime.strptime(created_at, "%Y-%m-%d").date()
+            age = (now - dt).days
             link = f"https://store.steampowered.com/app/{gid}"
-            tag = " [NEW]" if is_new else ""
-            lines.append(f"- **[{name}]({link})**{age_str}{tag}")
-            if len(lines) >= 12: break
+            lines.append(f"- **[{name}]({link})** (🆕 {age}d) [NEW]")
         return "\n".join(lines)
     except Exception as e:
         return f"⚠️ 分析错误: {e}"
@@ -620,71 +614,69 @@ def main():
     # 1. 运行即时采集
     run_collection()
     
-    # 2. Sitemap 发现
+    # 2. 收集待分析的候选游戏 (Sitemap 发现 + 平台新盘)
+    candidates = []
+    
+    # 2.1 Sitemap 发现
     new_discovery = get_new_games_from_sitemaps()
+    candidates.extend(new_discovery)
     
-    # 3. Trends 分析
-    trends_section, recommendations = generate_trends_analysis(new_discovery)
-    
-    # 3.1 生成潜力值汇总
-    potential_summary = "✨ 暂无高潜力新盘推荐。"
-    if recommendations:
-        # 按分数降序排列
-        recommendations.sort(key=lambda x: x['score'], reverse=True)
-        rec_lines = []
-        for rec in recommendations[:3]: # 取前 3 个
-            rec_lines.append(f"1. **{rec['name']}** ({rec['platform'].upper()}) - {rec['badge']} [立即研究]({rec['url']})")
-        potential_summary = "\n".join(rec_lines)
-
-    # 4. 基础热度分析
+    # 2.2 Roblox 潜力新盘
     roblox_data, roblox_stars = analyze_roblox()
-    steam_data = analyze_steam()
-    crazy_data = analyze_crazygames()
-    itch_data = analyze_itch()
-    
-    # 5. 综合潜力建站推荐 (全平台新盘聚合)
-    # 我们不仅看 Sitemap 发现的，也看各平台 API 抓取到的新爆盘
-    
-    # 5.1 收集各平台的新盘 (真实 30 天内)
-    platform_new_stars = []
-    
-    # 从 Steam 提取新盘
+    for star in roblox_stars:
+        candidates.append({
+            "name": star['name'],
+            "url": star['url'],
+            "platform": star['platform']
+        })
+        
+    # 2.3 Steam 潜力新盘
     steam_conn = get_db_connection("steam")
     if steam_conn:
-        now = datetime.now(timezone.utc).date()
-        q = "SELECT name, game_id, created_at FROM first_seen WHERE created_at IS NOT NULL"
+        now_date = datetime.now(timezone.utc).date()
+        # 按发现时间降序排列，优先分析最新的
+        q = "SELECT name, game_id, created_at FROM first_seen WHERE created_at IS NOT NULL ORDER BY created_at DESC"
         for name, gid, created_at in steam_conn.execute(q).fetchall():
             try:
                 dt = datetime.strptime(created_at, "%Y-%m-%d").date()
-                if (now - dt).days <= 30:
-                    platform_new_stars.append({
-                        "name": name, "score": 75, "platform": "steam", 
+                age = (now_date - dt).days
+                # 严格限制：只监控上线 7 天内的 Steam 游戏
+                if age <= 7:
+                    candidates.append({
+                        "name": name,
                         "url": f"https://store.steampowered.com/app/{gid}",
-                        "badge": f"⭐ 75 [🆕 新盘 ({(now-dt).days}d)]"
+                        "platform": "steam",
+                        "age": age
                     })
             except: pass
         steam_conn.close()
 
-    # 合并所有潜力新盘
-    all_recommendations = recommendations + roblox_stars + platform_new_stars
+    # 去重候选名单 (根据 URL)
+    seen_urls = set()
+    unique_candidates = []
+    for c in candidates:
+        if c['url'] not in seen_urls:
+            unique_candidates.append(c)
+            seen_urls.add(c['url'])
+
+    # 按“新鲜度”排序，优先分析刚上线 1-3 天的游戏
+    unique_candidates.sort(key=lambda x: x.get('age', 99))
+
+    # 3. 执行统一的 Trends 分析
+    trends_section, recommendations = generate_trends_analysis(unique_candidates)
     
-    # 5.2 对这些新盘进行 Trends 验证 (如果还没做的话)
-    # 这里为了效率，如果已经在 recommendations 里就不重复做了
+    # 4. 生成报告数据
+    steam_data = analyze_steam()
+    crazy_data = analyze_crazygames()
+    itch_data = analyze_itch()
     
-    potential_summary = "✨ 暂无高潜力新盘推荐。"
-    if all_recommendations:
+    # 5. 综合潜力建站推荐 (仅展示超过 GPTs 的爆款)
+    potential_summary = "✨ 暂无搜索热度超过 GPTs 的爆款新盘。"
+    if recommendations:
         # 按分数降序排列
-        all_recommendations.sort(key=lambda x: x['score'], reverse=True)
-        # 去重 (根据 URL)
-        seen_urls = set()
-        unique_recs = []
-        for r in all_recommendations:
-            if r['url'] not in seen_urls:
-                unique_recs.append(r)
-                seen_urls.add(r['url'])
-        
+        recommendations.sort(key=lambda x: x['score'], reverse=True)
         rec_lines = []
-        for i, rec in enumerate(unique_recs[:6]):
+        for i, rec in enumerate(recommendations[:6]):
             rec_lines.append(f"{i+1}. **{rec['name']}** ({rec['platform'].upper()}) - {rec['badge']} [立即研究]({rec['url']})")
         potential_summary = "\n".join(rec_lines)
 
@@ -692,7 +684,7 @@ def main():
 > 生成时间: {ts_str}
 
 ## 🎯 今日潜力建站推荐 (Top 5)
-> 优先筛选：近 30 天新上线、搜索量突增、或正处于爆发期的新盘。
+> 优先筛选：搜索热度在过去 7 天内曾超过基准词 "gpts" 的新盘。
 
 {potential_summary}
 
