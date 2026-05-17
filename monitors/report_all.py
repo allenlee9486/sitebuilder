@@ -409,28 +409,40 @@ def generate_trends_analysis(new_games):
     sections = []
     recommendations = []
     
-    # 为了演示和效率，只分析前 10 个最“新”的 (增加分析范围)
-    to_analyze = new_games[:10]
-    print(f"📈 正在对 {len(to_analyze)} 个重点新游戏进行 Google Trends 分析 (Benchmark: GPTs)...")
+    # 核心逻辑：对所有新发现的游戏进行 Trends 分析
+    # 按照平台分组，每组取最新的 5 个，总数控制在 20 个以内以防 429
+    platform_groups = {}
+    for g in new_games:
+        p = g['platform']
+        if p not in platform_groups: platform_groups[p] = []
+        platform_groups[p].append(g)
+    
+    to_analyze = []
+    for p in platform_groups:
+        to_analyze.extend(platform_groups[p][:5])
+    
+    to_analyze = to_analyze[:20]
+    
+    print(f"📈 正在对 {len(to_analyze)} 个重点新发现进行 Google Trends 分析 (7天全球 vs gpts)...")
     
     for game in to_analyze:
         name = game['name']
         res = analyzer.compare_with_benchmark(name)
         
         if res:
-            badge = "⚪ 观察中"
-            score = 0
+            # 只有当趋势图曾高于 gpts 时才标记为强烈推荐
             if res['exceeded']:
                 badge = "🔴 **强烈推荐 (EXPLOSIVE)**"
                 score = 100
             elif res['latest_keyword'] > res['latest_benchmark'] * 0.7:
                 badge = "🟠 **重点关注 (HOT)**"
                 score = 70
-            elif res['is_rising']:
-                badge = "🟡 **潜力品种 (RISING)**"
-                score = 40
+            else:
+                badge = "⚪ 观察中 (低于基准)"
+                score = 10
             
-            if score >= 40:
+            # 如果高于基准词，进入推荐名单
+            if res['exceeded']:
                 recommendations.append({
                     "name": name,
                     "score": score,
@@ -439,15 +451,19 @@ def generate_trends_analysis(new_games):
                     "badge": badge
                 })
 
-            section = f"### [{game['platform'].upper()}] {name}\n"
+            # 展示结果
+            platform_label = f"{game['platform'].upper()}"
+            if 'domain' in game: platform_label += f": {game['domain']}"
+            
+            section = f"### [{platform_label}] {name}\n"
             section += f"- **趋势评级**: {badge}\n"
             section += f"- **数据对比**: {name} (`{res['latest_keyword']}`) vs GPTs (`{res['latest_benchmark']}`)\n"
-            section += f"- **平均热度**: {res['avg_keyword']} (基准 GPTs: {res['avg_benchmark']})\n"
-            section += f"- **原始链接**: [点击访问]({game['url']})\n"
+            section += f"- **最高点突破**: {'✅ 是' if res['exceeded'] else '❌ 否'}\n"
+            section += f"- **链接**: [点击访问]({game['url']})\n"
             sections.append(section)
         else:
-            sections.append(f"### [{game['platform'].upper()}] {name}\n- ⚠️ Trends 数据暂不可用或搜索量过低\n- **链接**: [点击访问]({game['url']})")
-            
+            sections.append(f"### [{game['platform'].upper()}] {name}\n- ⚠️ Trends 数据不可用 (搜索量极低)\n- **链接**: [点击访问]({game['url']})")
+    
     return "\n".join(sections), recommendations
 
 # Steam 巨头黑名单

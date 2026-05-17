@@ -37,9 +37,9 @@ class TrendsAnalyzer:
                 benchmark_val = latest_values[self.benchmark]
                 keyword_val = latest_values[keyword]
                 
-                # Check for sudden spike: did it exceed benchmark in the last 24 hours?
-                recent_df = df.tail(24) 
-                exceeded = any(recent_df[keyword] > recent_df[self.benchmark])
+                # Check for mandatory condition: keyword MUST be higher than benchmark at least once in last 7 days
+                # Or latest value is higher
+                is_higher_than_benchmark = any(df[keyword] > df[self.benchmark])
                 
                 # Average volume
                 avg_benchmark = df[self.benchmark].mean()
@@ -52,7 +52,7 @@ class TrendsAnalyzer:
                     "latest_benchmark": int(benchmark_val),
                     "avg_keyword": round(float(avg_keyword), 2),
                     "avg_benchmark": round(float(avg_benchmark), 2),
-                    "exceeded": exceeded,
+                    "exceeded": is_higher_than_benchmark,
                     "is_rising": keyword_val > (avg_keyword * 1.5), 
                     "data": df.to_dict()
                 }

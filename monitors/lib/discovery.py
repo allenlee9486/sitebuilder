@@ -123,7 +123,9 @@ def discover_custom_sites():
         # Use overrides if available, otherwise try common locations
         sitemap_urls = SITEMAP_OVERRIDES.get(domain, [
             f"https://{domain}/sitemap.xml",
-            f"https://{domain}/sitemap_index.xml"
+            f"https://{domain}/sitemap_index.xml",
+            f"http://{domain}/sitemap.xml",
+            f"http://{domain}/sitemap_index.xml"
         ])
         
         for sitemap_url in sitemap_urls:
@@ -136,26 +138,35 @@ def discover_custom_sites():
                 if not items:
                     continue
                 
-                # If it's a sitemap index, we should ideally parse the sub-sitemaps
-                # But for simplicity and focus on "newest", we'll just take the URLs
-                # and assume they might be games.
-                
+                # If it's a sitemap index (contains other sitemaps), try to follow the last one
+                sub_sitemaps = [i['loc'] for i in items if 'sitemap' in i['loc'].lower() and i['loc'] != sitemap_url]
+                if sub_sitemaps:
+                    # Focus on the most recent sub-sitemap
+                    last_sub = sub_sitemaps[-1]
+                    sub_content = fetch_sitemap(last_sub)
+                    if sub_content:
+                        items = parse_sitemap(sub_content)
+
                 # Filter for likely game URLs (this is heuristic)
-                for item in items[-20:]: # Only check last 20 per sitemap to keep it fast
+                # We check the last 50 entries as they are usually the newest
+                for item in items[-50:]: 
                     loc = item['loc']
                     # Basic heuristic: if it's not the homepage and has some path
-                    if loc.strip("/") != f"https://{domain}".strip("/"):
+                    if loc.strip("/") != f"https://{domain}".strip("/") and loc.strip("/") != f"http://{domain}".strip("/"):
                         # Extract a name from the URL
-                        path = loc.strip("/").split("/")[-1]
-                        name = path.replace("-", " ").title()
+                        path = loc.rstrip("/").split("/")[-1]
+                        if not path or path == domain: continue
+                        
+                        name = path.replace("-", " ").replace("_", " ").title()
                         all_game_urls.append({
-                            "name": f"[{domain}] {name}",
-                            "slug": loc, # Use full URL as slug/ID for uniqueness
+                            "name": name,
+                            "domain": domain,
                             "url": loc,
                             "platform": "general"
                         })
                 break # If we successfully got items from one sitemap location, move to next domain
             except Exception as e:
-                print(f"⚠️ Failed to parse sitemap for {domain} at {sitemap_url}: {e}")
+                # print(f"⚠️ Failed to parse sitemap for {domain} at {sitemap_url}: {e}")
+                pass
                 
     return all_game_urls

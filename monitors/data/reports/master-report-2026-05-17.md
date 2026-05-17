@@ -1,15 +1,15 @@
 # 🌐 Sitebuilder 全平台趋势简报
-> 生成时间: 2026-05-16 22:28:02 UTC
+> 生成时间: 2026-05-17 06:28:03 UTC
 
 ## 🎯 今日潜力建站推荐 (Top 5)
 > 优先筛选：近 30 天新上线、搜索量突增、或正处于爆发期的新盘。
 
-1. **Explode for Brainrots!** (ROBLOX) - ⭐ 131 [🆕 新盘 (30d) | 🚀 暴涨 122%] [立即研究](https://www.roblox.com/games/134900709608900)
-2. **Build Playground!** (ROBLOX) - ⭐ 131 [🆕 新盘 (29d) | 🚀 暴涨 113%] [立即研究](https://www.roblox.com/games/135678396831347)
-3. **Would You Rather: Fashion Tower 👚** (ROBLOX) - ⭐ 99 [🆕 新盘 (14d) | 🚀 暴涨 58%] [立即研究](https://www.roblox.com/games/125579556815131)
-4. **[UPD] Soccer: Zero ** (ROBLOX) - ⭐ 93 [🆕 新盘 (16d) | 🚀 暴涨 98%] [立即研究](https://www.roblox.com/games/75462869229229)
-5. **💈 Be A Hair?** (ROBLOX) - ⭐ 92 [🆕 新盘 (22d) | 🚀 暴涨 45%] [立即研究](https://www.roblox.com/games/139054513518556)
-6. **[LOST MEDIA] Trending Meme Animations** (ROBLOX) - ⭐ 92 [🆕 新盘 (28d) | 🚀 暴涨 44%] [立即研究](https://www.roblox.com/games/105282886970300)
+1. **Would You Rather: Fashion Tower 👚** (ROBLOX) - ⭐ 99 [🆕 新盘 (15d) | 🚀 暴涨 47%] [立即研究](https://www.roblox.com/games/125579556815131)
+2. **[UPD] Soccer: Zero ** (ROBLOX) - ⭐ 93 [🆕 新盘 (17d) | 🚀 暴涨 93%] [立即研究](https://www.roblox.com/games/75462869229229)
+3. **💈 Be A Hair?** (ROBLOX) - ⭐ 92 [🆕 新盘 (23d) | 🚀 暴涨 43%] [立即研究](https://www.roblox.com/games/139054513518556)
+4. **[LOST MEDIA] Trending Meme Animations** (ROBLOX) - ⭐ 92 [🆕 新盘 (29d) | 🚀 暴涨 47%] [立即研究](https://www.roblox.com/games/105282886970300)
+5. **Build Playground!** (ROBLOX) - ⭐ 91 [🆕 新盘 (30d) | 🚀 暴涨 84%] [立即研究](https://www.roblox.com/games/135678396831347)
+6. **🌻 Dandy’s World [ALPHA]** (ROBLOX) - ⭐ 80 [🚀 暴涨 124%] [立即研究](https://www.roblox.com/games/16116270224)
 
 ---
 
@@ -17,32 +17,32 @@
 ✨ 暂无新发现的游戏需要进行 Trends 分析。
 
 ## 🎮 Roblox 实时热度 & 趋势
-- **[[NOW]Slime RNG](https://www.roblox.com/games/92416421522960)**: 427,913 在线 (🚀 暴涨 81%)
-- **[[🔥Huge Update⚔️] Sailor Piece](https://www.roblox.com/games/77747658251236)**: 227,414 在线 (活跃)
-- **[[🍀] Fish It! 🐟](https://www.roblox.com/games/121864768012064)**: 107,503 在线 (活跃)
-- **[[🐝] Grow a Garden 🌶️](https://www.roblox.com/games/126884695634066)**: 100,285 在线 (🚀 暴涨 34%)
-- **[Survive Zombie Arena](https://www.roblox.com/games/114204398207377)**: 96,804 在线 (🚀 暴涨 34%)
-- **[🌻 Dandy’s World [ALPHA]](https://www.roblox.com/games/16116270224)**: 96,614 在线 (🚀 暴涨 147%)
-- **[[💥 UPDATE 4] Attack on Titan Revolution](https://www.roblox.com/games/13379208636)**: 80,335 在线 (活跃)
-- **[Dress To Impress⭐](https://www.roblox.com/games/15101393044)**: 79,263 在线 (🚀 暴涨 43%)
-- **[Be a Lucky Block](https://www.roblox.com/games/124473577469410)**: 77,352 在线 (🚀 暴涨 493%)
-- **[Catalog Avatar Creator](https://www.roblox.com/games/7041939546)**: 73,869 在线 (🚀 暴涨 40%)
-- **[[CURE] Violence District](https://www.roblox.com/games/93978595733734)**: 68,964 在线 (🚀 暴涨 54%)
-- **[Fisch 🐟 [SOON]](https://www.roblox.com/games/16732694052)**: 68,196 在线 (🚀 暴涨 55%)
+- **[[NOW]Slime RNG](https://www.roblox.com/games/92416421522960)**: 403,112 在线 (🚀 暴涨 70%)
+- **[[🔥Huge Update⚔️] Sailor Piece](https://www.roblox.com/games/77747658251236)**: 220,810 在线 (活跃)
+- **[[🏆UPD] Fish It! 🐟](https://www.roblox.com/games/121864768012064)**: 126,001 在线 (活跃)
+- **[[🐝] Grow a Garden 🌶️](https://www.roblox.com/games/126884695634066)**: 104,858 在线 (🚀 暴涨 38%)
+- **[Survive Zombie Arena](https://www.roblox.com/games/114204398207377)**: 102,882 在线 (🚀 暴涨 38%)
+- **[🌻 Dandy’s World [ALPHA]](https://www.roblox.com/games/16116270224)**: 94,677 在线 (🚀 暴涨 124%)
+- **[[💥 UPDATE 4] Attack on Titan Revolution](https://www.roblox.com/games/13379208636)**: 80,323 在线 (活跃)
+- **[[CURE] Violence District](https://www.roblox.com/games/93978595733734)**: 78,708 在线 (🚀 暴涨 73%)
+- **[Dress To Impress⭐](https://www.roblox.com/games/15101393044)**: 77,880 在线 (🚀 暴涨 40%)
+- **[Catalog Avatar Creator](https://www.roblox.com/games/7041939546)**: 77,828 在线 (🚀 暴涨 45%)
+- **[Be a Lucky Block](https://www.roblox.com/games/124473577469410)**: 72,100 在线 (🚀 暴涨 449%)
+- **[Fisch 🐟 [SOON]](https://www.roblox.com/games/16732694052)**: 68,445 在线 (🚀 暴涨 53%)
 
 ## 🚂 Steam 市场动态 (Top Sellers)
-- **[SiNiSistar 2](https://store.steampowered.com/app/4466620)** (🆕 1d) [NEW]
-- **[BidKing](https://store.steampowered.com/app/4128580)** (🆕 31d) [NEW]
-- **[Where Winds Meet](https://store.steampowered.com/app/3564740)**
+- **[SiNiSistar 2](https://store.steampowered.com/app/4466620)** (🆕 2d) [NEW]
+- **[BidKing](https://store.steampowered.com/app/4128580)** (🆕 32d) [NEW]
 - **[NBA 2K26](https://store.steampowered.com/app/3472040)**
-- **[Game of Thrones Kingsroad](https://store.steampowered.com/app/4214820)** (🆕 2d) [NEW]
-- **[Psychic Kung Fu Master](https://store.steampowered.com/app/3313720)** (🆕 2d) [NEW]
-- **[Stardew Valley](https://store.steampowered.com/app/413150)**
-- **[Subnautica](https://store.steampowered.com/app/264710)**
-- **[Wuthering Waves](https://store.steampowered.com/app/3513350)**
-- **[Warframe](https://store.steampowered.com/app/230410)**
+- **[Game of Thrones Kingsroad](https://store.steampowered.com/app/4214820)** (🆕 3d) [NEW]
+- **[Psychic Kung Fu Master](https://store.steampowered.com/app/3313720)** (🆕 3d) [NEW]
 - **[World of Warships](https://store.steampowered.com/app/552990)**
-- **[EA SPORTS FC™ 26](https://store.steampowered.com/app/3405690)**
+- **[Subnautica](https://store.steampowered.com/app/264710)**
+- **[Stardew Valley](https://store.steampowered.com/app/413150)**
+- **[Where Winds Meet](https://store.steampowered.com/app/3564740)**
+- **[Wuthering Waves](https://store.steampowered.com/app/3513350)**
+- **[Ragnarok X: Next Generation](https://store.steampowered.com/app/4279820)**
+- **[Red Dead Redemption 2](https://store.steampowered.com/app/1174180)**
 
 ## ⚡ CrazyGames 网页端新盘
 - **[Ball Roll](https://www.crazygames.com/game/ball-roll-bbr)** *[Puzzle]*
@@ -71,12 +71,12 @@
 - **[COBB CAN MOVE](https://abho.itch.io/cobb-can-move)** *by abho*
 - **[COLD CITY](https://kerineia.itch.io/cold-city)** *by Kerineia*
 - **[CreepyDates](https://hahadit.itch.io/creepydates)** *by Hahadit*
-- **[Cultivators Chronicles: Idle Wuxia](https://nor-pan.itch.io/cultivators-chronicles-idle-wuxia)** *by Wuxia Comp*
 - **[Death Loop [A Danganronpa-inspired Game]](https://hopefullight.itch.io/time-traveler)** *by Hopeful Light*
-- **[Divine Omen](https://rubyring-games.itch.io/divine-omen)** *by K | Ruby Ring Games*
-- **[Don&#039;t eat the cashier!](https://miloff.itch.io/dont-eat-the-cashier)** *by Miloff*
+- **[Doki Doki Literature Club!](https://teamsalvato.itch.io/ddlc)** *by Team Salvato*
+- **[Don&#039;t eat the cashier!](https://detcc.itch.io/dont-eat-the-cashier)** *by DETCc*
 - **[FATHER | Demo](https://wetboxteam.itch.io/father)** *by WetBoxTeam*
 - **[God is Dead &amp; I&#039;m Starving](https://rinucomics.itch.io/god-is-dead-im-starving)** *by rinucomics*
+- **[Hetalia: Lonely World](https://hallow-ghost.itch.io/hetalia-lonely-world)** *by Hallow.Ghost*
 
 ---
 ## 💡 建站决策建议 (基于反推逻辑)
