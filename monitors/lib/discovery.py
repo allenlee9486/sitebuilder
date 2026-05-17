@@ -102,17 +102,26 @@ CUSTOM_SITES = [
     "addictinggames.com",
     "html5games.com",
     "onlinegames.io",
-    "twoplayergames.org"
+    "twoplayergames.org",
+    "crazygames.com",
+    "itch.io",
+    "kongregate.com",
+    "gamedistribution.com",
+    "armorgames.com",
+    "gameflare.com"
 ]
 
 # Mapping of domains to specific sitemap URLs if the default ones fail
 SITEMAP_OVERRIDES = {
-    "y8.com": ["https://www.y8.com/sitemaps/y8/en/sitemap.xml.gz"],
-    "poki.com": ["https://poki.com/en/sitemaps/index.xml"],
+    "y8.com": ["https://www.y8.com/sitemaps/y8/en/sitemap.xml.gz", "https://zh.y8.com/sitemap.xml"],
+    "poki.com": ["https://poki.com/en/sitemaps/index.xml", "https://poki.com/zh/sitemap.xml"],
     "twoplayergames.org": ["https://www.twoplayergames.org/sitemap-games.xml"],
     "html5games.com": ["https://play.famobi.com/sitemap.xml"],
     "addictinggames.com": ["https://www.addictinggames.com/sitemap.xml"],
-    "onlinegames.io": ["https://www.onlinegames.io/sitemap.xml"]
+    "onlinegames.io": ["https://www.onlinegames.io/sitemap.xml"],
+    "gamedistribution.com": ["https://gamedistribution.com/sitemap.xml"],
+    "armorgames.com": ["https://armorgames.com/sitemap.xml"],
+    "gameflare.com": ["https://www.gameflare.com/sitemap.xml"]
 }
 
 def discover_custom_sites():
